@@ -8,6 +8,9 @@
 "                 ╚═══╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝                   "
 "                                                                         "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ## Navigating this .vimrc ##
+" To open folded line press zo
+" To fold press zm
 
 " Disable compatibility with vi which can cause unexpected issues.
 set nocompatible
