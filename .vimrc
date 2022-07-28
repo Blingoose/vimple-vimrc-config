@@ -95,7 +95,7 @@ set wildmode=list:longest
 " Wildmenu will ignore files with these extensions.
 set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
 
-" Enable fzf via homebrew "
+" Enable Fuzzy-finder (require installation of fzf)"
 set rtp+=/opt/homebrew/opt/fzf
 
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
@@ -152,13 +152,13 @@ call plug#end()
 
 " GENERAL MAPPING ---------------------------------------------------------------- {{{
 
-" Set the backslash as the leader key.
+" Set the -> , <- as the leader key.
 let mapleader = ','
 
 " Press \\ to jump back to the last cursor position.
 nnoremap \\ ``
 
-" Press ,h  to turn off search highlighting.
+" Press <leader>h to turn off search highlighting.
 nnoremap <leader>h :nohlsearch<CR>
 
 " Type jj to exit insert mode quickly.
@@ -179,11 +179,12 @@ nnoremap N Nzz
 " Yank from cursor to the end of line.
 nnoremap Y y$
 
-" fzf Files "
+" Fuzzy-finder (see line 98 for instructions)
 nnoremap <leader>p :Files<Cr>
+" Fuzzy-finder git
 nnoremap <leader>o :GFiles<Cr>
 
-" Ag search "
+" Ripgrep search (install ripgrep)
 nnoremap <leader>i :Rg<Cr>
 
 " Map the F5 key to run a Python script inside Vim.
@@ -194,6 +195,8 @@ nnoremap <leader>i :Rg<Cr>
 " !python3 % executes the current file with Python.
 nnoremap <f5> :w <CR>:!clear; python % <CR>
 imap <f5> <Esc>:w <CR>:!clear; python %<CR>
+
+" Run python script side by side with the code. (Run as a buffer)
 autocmd Filetype python nnoremap <buffer> <F6> :w<CR>:vert ter python "%"<CR>
 
 " Map the F4 key to run a Node script inside Vim.
