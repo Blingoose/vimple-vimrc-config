@@ -182,7 +182,7 @@ nnoremap N Nzz
 " Yank from cursor to the end of line.
 nnoremap Y y$
 
-" Fuzzy-finder (see line 98 for instructions)
+" Fuzzy-finder (see line 101 for instructions)
 nnoremap <leader>p :Files<Cr>
 " Fuzzy-finder git
 nnoremap <leader>o :GFiles<Cr>
