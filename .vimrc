@@ -163,7 +163,7 @@ call plug#end()
 
 " GENERAL MAPPING ---------------------------------------------------------------- {{{
 
-" Set the ',' as the leader key.
+" Set the comma as the leader key.
 let mapleader = ','
 
 " Press \\ to jump back to the last cursor position.
@@ -239,7 +239,8 @@ tnoremap <leader>n <C-\><C-n>
 
 " NERDTree specific mappings.
 " Map the F3 key to toggle NERDTree open and close.
-nnoremap <F3> :NERDTreeToggle<cr>
+" nnoremap <F3> :NERDTreeToggle<cr>
+nnoremap <±> :NERDTreeToggle<cr>
 
 " }}}
 
