@@ -8,9 +8,9 @@
 "                 ╚═══╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝                   "
 "                                                                         "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" ## Navigating this .vimrc ##
-" To open folded line press zo
-" To fold press zm
+" ### VIMRC NAVIGATION ###
+" Press 'zo' to fold-open.
+" Press 'zm' to fold-close.
 
 " Disable compatibility with vi which can cause unexpected issues.
 set nocompatible
@@ -18,7 +18,7 @@ set nocompatible
 " More powerful backspace.
 set backspace=indent,eol,start
 
-" enable mouse support "
+" enable mouse support. 
 set mouse=a
 
 " Enable type file detection. Vim will be able to try to detect the type of file is use.
@@ -98,32 +98,39 @@ set wildmode=list:longest
 " Wildmenu will ignore files with these extensions.
 set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
 
-" Enable Fuzzy-finder (require installation of fzf)"
+" Enable fuzzy-finder (fzf install required first).
 set rtp+=/opt/homebrew/opt/fzf
 
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
 " unicode characters in the file autoload/float.vim
+" **required for coc-nvim.
 set encoding=utf-8
 
 " TextEdit might fail if hidden is not set.
+" **required for coc-nvim.
 set hidden
 
 " Some servers have issues with backup files, see #649.
+" **required for coc-nvim.
 set nobackup
 set nowritebackup
 
 " Give more space for displaying messages.
+" **required for coc-nvim.
 set cmdheight=2
 
-" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable.
 " delays and poor user experience.
+" **required for coc-nvim.
 set updatetime=300
 
 " Don't pass messages to |ins-completion-menu|.
+" **required for coc-nvim.
 set shortmess+=c
 
-" Always show the signcolumn, otherwise it would shift the text each time
+" Always show the signcolumn, otherwise it would shift the text each time.
 " diagnostics appear/become resolved.
+" **required for coc-nvim.
 if has("nvim-0.5.0") || has("patch-8.1.1564")
   " Recently vim can merge signcolumn and number column into one
   set signcolumn=number
@@ -135,6 +142,11 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
+" ** Color Schemes **
+  Plug 'gruvbox-community/gruvbox'
+  Plug 'joshdick/onedark.vim'
+  Plug 'NLKNguyen/papercolor-theme'
+
 " ** Functionality
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'preservim/nerdtree'
@@ -144,10 +156,6 @@ call plug#begin('~/.vim/plugged')
   Plug 'ryanoasis/vim-devicons'
   Plug 'jlanzarotta/bufexplorer'
   Plug 'tpope/vim-fugitive'
-" ** Color Schemes **
-  Plug 'gruvbox-community/gruvbox'
-  Plug 'joshdick/onedark.vim'
-  Plug 'NLKNguyen/papercolor-theme'
 
 call plug#end()
 
@@ -155,17 +163,17 @@ call plug#end()
 
 " GENERAL MAPPING ---------------------------------------------------------------- {{{
 
-" Set the -> , <- as the leader key.
+" Set the ',' as the leader key.
 let mapleader = ','
 
 " Press \\ to jump back to the last cursor position.
 nnoremap \\ ``
 
-" Press <leader>h to turn off search highlighting.
+" Press ,h  to turn off search highlighting.
 nnoremap <leader>h :nohlsearch<CR>
 
-" Type jj to exit insert mode quickly.
-" inoremap jj <Esc>
+" Type jk to exit insert mode quickly.
+" inoremap jk <Esc>
 
 " Press the space bar to type the : character in command mode.
 " nnoremap <space> :
@@ -182,34 +190,35 @@ nnoremap N Nzz
 " Yank from cursor to the end of line.
 nnoremap Y y$
 
-" Fuzzy-finder (see line 101 for instructions)
+" Fuzzy-finder files search. 
 nnoremap <leader>p :Files<Cr>
-" Fuzzy-finder git
+" Fuzzy-finder git search.
 nnoremap <leader>o :GFiles<Cr>
 
-" Ripgrep search (install ripgrep)
+" Ripgrep within fuzzy-finder.
 nnoremap <leader>i :Rg<Cr>
 
-" Map the F5 key to run a Python script inside Vim.
-" We map F5 to a chain of commands here.
+" Map the F4 key to run a Python script inside Vim.
+" We map F4 to a chain of commands here.
 " :w saves the file.
 " <CR> (carriage return) is like pressing the enter key.
 " !clear runs the external clear screen command.
-" !python3 % executes the current file with Python.
-nnoremap <f5> :w <CR>:!clear; python % <CR>
-imap <f5> <Esc>:w <CR>:!clear; python %<CR>
+" python % executes the current file with Python.
+nnoremap <f4> :w <CR>:!clear; python % <CR>
+imap <f4> <Esc>:w <CR>:!clear; python %<CR>
+" Run Python side by side with the written code (in a buffer). 
+autocmd Filetype python nnoremap <buffer> <F5> :w<CR>:vert ter python "%"<CR>
 
-" Run python script side by side with the code. (Run as a buffer)
-autocmd Filetype python nnoremap <buffer> <F6> :w<CR>:vert ter python "%"<CR>
-
-" Map the F4 key to run a Node script inside Vim.
-" We map F5 to a chain of commands here.
+" Map the F6 key to run a Node script inside Vim.
+" We map F6 to a chain of commands here.
 " :w saves the file.
 " <CR> (carriage return) is like pressing the enter key.
 " !clear runs the external clear screen command.
-" !node % executes the current file with Python.
-nnoremap <f4> :w <CR>:!clear <CR>:!node % <CR>
-
+" node % executes the current file with Node.
+nnoremap <f6> :w <CR>:!clear; node % <CR>
+imap <f6> <Esc>:w <CR>:!clear; node %<CR>
+" Run Node side by side with the written code (in a buffer).
+autocmd Filetype javascript nnoremap <buffer> <F7> :w<CR>:vert ter node "%"<CR>
 
 " You can split the window in Vim by typing :split or :vsplit.
 " Navigate the split view easier by pressing CTRL+j, CTRL+k, CTRL+h, or CTRL+l.
@@ -250,7 +259,7 @@ function! CheckBackspace() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" Use <c-space> to trigger completion.
+" Use ctrl-space to trigger completion.
 if has('nvim')
   inoremap <silent><expr> <c-space> coc#refresh()
 else
@@ -420,30 +429,30 @@ let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', 
 
 " STATUS LINE ---------------------------------------------------------------- {{{
 
-"Define user color group User1
+" Define user color group User1 (modifier is now bold and yellow).
 hi User1 cterm=bold ctermfg=180 gui=bold guifg=#E5C07B ctermbg=236 guibg=#2C323C
 
-" A function to display Error and Warning in statusline.
+" A function to display Error and Warning in statusline(for coc-nvim).
 " use :h coc-status for more info.
 function! StatusDiagnostic() abort
-	  let info = get(b:, 'coc_diagnostic_info', {})
-	  if empty(info) | return '' | endif
-	  let msgs = []
-      if !get(info, 'error', 0) && !get(info, 'warning', 0)
+    let info = get(b:, 'coc_diagnostic_info', {})
+	if empty(info) | return '' | endif
+	let msgs = []
+    if !get(info, 'error', 0) && !get(info, 'warning', 0)
         return ' ✅ ' 
-      endif
-	  if get(info, 'error', 0) && !get(info, 'warning', 0)
+    endif
+	if get(info, 'error', 0) && !get(info, 'warning', 0)
 	    call add(msgs, ' ❌↪' . info['error'])
-	  endif
-	  if get(info, 'warning', 0) && get(info, 'error', 0)
+	endif
+	if get(info, 'warning', 0) && !get(info, 'error', 0)
+        call add(msgs, ' ⚠️ ↪' . info['warning'])
+    endif
+    if get(info, 'warning', 0) && get(info, 'error', 0)
         call add(msgs, ' ❌↪' . info['error'])
 	    call add(msgs, '⚠️ ↪' . info['warning'])
-	  endif
-      if get(info, 'warning', 0) && !get(info, 'error', 0)
-        call add(msgs, ' ⚠️ ↪' . info['warning'])
-      endif
-	  return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
-	endfunction
+	endif
+	return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
+endfunction
 
 " Clear status line when vimrc is reloaded.
 set statusline=
