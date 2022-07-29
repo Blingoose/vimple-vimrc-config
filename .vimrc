@@ -163,7 +163,7 @@ call plug#end()
 
 " GENERAL MAPPING ---------------------------------------------------------------- {{{
 
-" Set the comma as the leader key.
+" Set the ',' as the leader key.
 let mapleader = ','
 
 " Press \\ to jump back to the last cursor position.
@@ -239,8 +239,7 @@ tnoremap <leader>n <C-\><C-n>
 
 " NERDTree specific mappings.
 " Map the F3 key to toggle NERDTree open and close.
-" nnoremap <F3> :NERDTreeToggle<cr>
-nnoremap <±> :NERDTreeToggle<cr>
+nnoremap <F3> :NERDTreeToggle<cr>
 
 " }}}
 
@@ -359,6 +358,9 @@ command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
+
+" The command will run Prettier and format the file whenever you save the file.
+" command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
 
 " Mappings for CoCList
 " Show all diagnostics.
