@@ -126,10 +126,9 @@ set signcolumn=yes
 call plug#begin('~/.vim/plugged')
 
 " ** Color Schemes **
-  Plug 'gruvbox-community/gruvbox'
   Plug 'joshdick/onedark.vim'
   Plug 'NLKNguyen/papercolor-theme'
-
+  Plug 'sainnhe/gruvbox-material'
 " ** Functionality
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'preservim/nerdtree'
@@ -398,7 +397,14 @@ if &term =~ '256color'
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     set termguicolors
     set background=dark
-    colorscheme gruvbox
+  " Set contrast.
+    " This configuration option should be placed before `colorscheme gruvbox-material`.
+    " Available values: 'hard', 'medium'(default), 'soft'
+      let g:gruvbox_material_background = 'medium'
+
+    " For better performance
+      let g:gruvbox_material_better_performance = 1
+      colorscheme gruvbox-material
   endif
 endif
 
@@ -412,10 +418,10 @@ let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', 
 
 " STATUS LINE ---------------------------------------------------------------- {{{
 
-" Define user color group User1 (for one dark).
+" Define user color group User1, modifier sign (for one dark).
 hi User1 cterm=bold ctermfg=180 gui=bold guifg=#E5C07B ctermbg=236 guibg=#2C323C
-" Define user color group User2 (for gruvbox).
-hi User2 cterm=bold ctermfg=224 gui=bold guifg=Orange ctermbg=236 guibg=#4F4946
+" Define user color group User3, modifier sign(for gruvbox-material, medium).
+hi User2 cterm=bold ctermfg=175 gui=bold guifg=#d3869b ctermbg=236 guibg=#32302f
 
 " A function to display Error and Warning in statusline(for coc-nvim).
 " use :h coc-status for more info.
