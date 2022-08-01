@@ -398,7 +398,7 @@ if &term =~ '256color'
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     set termguicolors
     set background=dark
-    colorscheme onedark
+    colorscheme gruvbox
   endif
 endif
 
@@ -412,8 +412,10 @@ let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', 
 
 " STATUS LINE ---------------------------------------------------------------- {{{
 
-" Define user color group User1 (modifier is now bold and yellow).
+" Define user color group User1 (for one dark).
 hi User1 cterm=bold ctermfg=180 gui=bold guifg=#E5C07B ctermbg=236 guibg=#2C323C
+" Define user color group User2 (for gruvbox).
+hi User2 cterm=bold ctermfg=224 gui=bold guifg=Orange ctermbg=236 guibg=#4F4946
 
 " A function to display Error and Warning in statusline(for coc-nvim).
 " use :h coc-status for more info.
@@ -441,7 +443,7 @@ endfunction
 set statusline=
 
 " Status line left side.
-set statusline+=\ %F\%1*%{&modified?'❲+❳':''}%*\ %Y\ %R
+set statusline+=\ %F\%2*%{&modified?'❲+❳':''}%*\ %Y\ %R
 
 " Use a divider to separate the left side from the right side.
 set statusline+=%=
