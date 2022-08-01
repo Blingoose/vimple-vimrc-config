@@ -186,8 +186,8 @@ nnoremap <leader>i :Rg<Cr>
 " <CR> (carriage return) is like pressing the enter key.
 " !clear runs the external clear screen command.
 " python % executes the current file with Python.
-nnoremap <f4> :w <CR>:!clear; python % <CR>
-imap <f4> <Esc>:w <CR>:!clear; python %<CR>
+nnoremap <f4> :w <CR> :!clear && python % <CR>
+imap <f4> <Esc> :w <CR> :!clear && python %<CR>
 " Run Python side by side with the written code (in a buffer). 
 autocmd Filetype python nnoremap <buffer> <F5> :w<CR>:vert ter python "%"<CR>
 
@@ -197,8 +197,8 @@ autocmd Filetype python nnoremap <buffer> <F5> :w<CR>:vert ter python "%"<CR>
 " <CR> (carriage return) is like pressing the enter key.
 " !clear runs the external clear screen command.
 " node % executes the current file with Node.
-nnoremap <f6> :w <CR>:!clear; node % <CR>
-imap <f6> <Esc>:w <CR>:!clear; node %<CR>
+nnoremap <f6> :w <CR> :!clear && node % <CR>
+imap <f6> <Esc> :w <CR> :!clear && node %<CR>
 " Run Node side by side with the written code (in a buffer).
 autocmd Filetype javascript nnoremap <buffer> <F7> :w<CR>:vert ter node "%"<CR>
 
@@ -221,7 +221,7 @@ tnoremap <leader>n <C-\><C-n>
 
 " NERDTree specific mappings.
 " Map the F3 key to toggle NERDTree open and close.
-nnoremap <F3> :NERDTreeToggle<cr>
+nnoremap ± :NERDTreeToggle<cr>
 
 " }}}
 
