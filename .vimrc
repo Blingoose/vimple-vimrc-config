@@ -188,8 +188,9 @@ nnoremap <leader>i :Rg<Cr>
 " python % executes the current file with Python.
 nnoremap <f4> :w <CR> :!clear && python % <CR>
 imap <f4> <Esc> :w <CR> :!clear && python %<CR>
-" Run Python side by side with the written code (in a buffer). 
-autocmd Filetype python nnoremap <buffer> <F5> :w<CR>:vert ter python "%"<CR>
+" Run Node in separate buffer (See RUN PYTHON & NODE SCRIPT). 
+nnoremap <silent> <f5> :call SaveAndExecutePython()<CR>
+imap <silent> <f5> :<C-u>call SaveAndExecutePython()<CR>
 
 " Map the F6 key to run a Node script inside Vim.
 " We map F6 to a chain of commands here.
@@ -199,8 +200,9 @@ autocmd Filetype python nnoremap <buffer> <F5> :w<CR>:vert ter python "%"<CR>
 " node % executes the current file with Node.
 nnoremap <f6> :w <CR> :!clear && node % <CR>
 imap <f6> <Esc> :w <CR> :!clear && node %<CR>
-" Run Node side by side with the written code (in a buffer).
-autocmd Filetype javascript nnoremap <buffer> <F7> :w<CR>:vert ter node "%"<CR>
+" Run Node in separate buffer (See RUN PYTHON & NODE SCRIPT).
+nnoremap <silent> <f7> :call SaveAndExecuteNode()<CR>
+imap <silent> <f7> :<C-u>call SaveAndExecuteNode()<CR>
 
 " You can split the window in Vim by typing :split or :vsplit.
 " Navigate the split view easier by pressing CTRL+j, CTRL+k, CTRL+h, or CTRL+l.
@@ -220,7 +222,7 @@ noremap <c-right> <c-w><
 tnoremap <leader>n <C-\><C-n>
 
 " NERDTree specific mappings.
-" Map the F3 key to toggle NERDTree open and close.
+" Map the ± key to toggle NERDTree open and close.
 nnoremap ± :NERDTreeToggle<cr>
 
 " }}}
@@ -416,6 +418,130 @@ let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', 
 
 " }}}
 
+" RUN PYTHON & NODE SCRIPT ---------------------------------------------------------------- {{{
+
+" #####RUN PYTHON IN BUFFER WITH F5 #####
+" https://stackoverflow.com/questions/18948491/running-python-code-in-vim
+function! SaveAndExecutePython()
+    " SOURCE [reusable window]: https://github.com/fatih/vim-go/blob/master/autoload/go/ui.vim
+
+    " save and reload current file
+    silent execute "update | edit"
+
+    " get file path of current file
+    let s:current_buffer_file_path = expand("%")
+
+    let s:output_buffer_name = "Python"
+    let s:output_buffer_filetype = "output"
+
+    " reuse existing buffer window if it exists otherwise create a new one
+    if !exists("s:buf_nr") || !bufexists(s:buf_nr)
+        silent execute 'botright new ' . s:output_buffer_name
+        let s:buf_nr = bufnr('%')
+    elseif bufwinnr(s:buf_nr) == -1
+        silent execute 'botright new'
+        silent execute s:buf_nr . 'buffer'
+    elseif bufwinnr(s:buf_nr) != bufwinnr('%')
+        silent execute bufwinnr(s:buf_nr) . 'wincmd w'
+    endif
+
+    silent execute "setlocal filetype=" . s:output_buffer_filetype
+    setlocal bufhidden=delete
+    setlocal buftype=nofile
+    setlocal noswapfile
+    setlocal nobuflisted
+    setlocal winfixheight
+    " setlocal cursorline " make it easy to distinguish
+    setlocal nonumber
+    setlocal norelativenumber
+    setlocal showbreak=""
+
+    " clear the buffer
+    setlocal noreadonly
+    setlocal modifiable
+    %delete _
+
+    " add the console output
+    silent execute ".!python " . shellescape(s:current_buffer_file_path, 1)
+
+    " resize window to content length
+    " Note: This is annoying because if you print a lot of lines then your code buffer is forced to a height of one line every time you run this function.
+    "       However without this line the buffer starts off as a default size and if you resize the buffer then it keeps that custom size after repeated runs of this function.
+    "       But if you close the output buffer then it returns to using the default size when its recreated
+    "execute 'resize' . line('$')
+
+    " make the buffer non modifiable
+    set laststatus=0
+    setlocal readonly
+    setlocal nomodifiable
+    if (line('$') == 1 && getline(1) == '')
+      q!
+    endif
+    silent execute 'wincmd p'
+endfunction
+
+" #####RUN NODE IN BUFFER WITH F7 #####
+" https://stackoverflow.com/questions/18948491/running-python-code-in-vim
+function! SaveAndExecuteNode()
+    " SOURCE [reusable window]: https://github.com/fatih/vim-go/blob/master/autoload/go/ui.vim
+
+    " save and reload current file
+    silent execute "update | edit"
+
+    " get file path of current file
+    let s:current_buffer_file_path = expand("%")
+
+    let s:output_buffer_name = "Node"
+    let s:output_buffer_filetype = "output"
+
+    " reuse existing buffer window if it exists otherwise create a new one
+    if !exists("s:buf_nr") || !bufexists(s:buf_nr)
+        silent execute 'botright new ' . s:output_buffer_name
+        let s:buf_nr = bufnr('%')
+    elseif bufwinnr(s:buf_nr) == -1
+        silent execute 'botright new'
+        silent execute s:buf_nr . 'buffer'
+    elseif bufwinnr(s:buf_nr) != bufwinnr('%')
+        silent execute bufwinnr(s:buf_nr) . 'wincmd w'
+    endif
+
+    silent execute "setlocal filetype=" . s:output_buffer_filetype
+    setlocal bufhidden=delete
+    setlocal buftype=nofile
+    setlocal noswapfile
+    setlocal nobuflisted
+    setlocal winfixheight
+    " setlocal cursorline " make it easy to distinguish
+    setlocal nonumber
+    setlocal norelativenumber
+    setlocal showbreak=""
+
+    " clear the buffer
+    setlocal noreadonly
+    setlocal modifiable
+    %delete _
+
+    " add the console output
+    silent execute ".!node " . shellescape(s:current_buffer_file_path, 1)
+
+    " resize window to content length
+    " Note: This is annoying because if you print a lot of lines then your code buffer is forced to a height of one line every time you run this function.
+    "       However without this line the buffer starts off as a default size and if you resize the buffer then it keeps that custom size after repeated runs of this function.
+    "       But if you close the output buffer then it returns to using the default size when its recreated
+    "execute 'resize' . line('$')
+
+    " make the buffer non modifiable
+    set laststatus=0
+    setlocal readonly
+    setlocal nomodifiable
+    if (line('$') == 1 && getline(1) == '')
+      q!
+    endif
+    silent execute 'wincmd p'
+endfunction
+
+" }}}
+
 " STATUS LINE ---------------------------------------------------------------- {{{
 
 " Define user color group User1, modifier sign (for one dark).
@@ -423,14 +549,15 @@ hi User1 cterm=bold ctermfg=180 gui=bold guifg=#E5C07B ctermbg=236 guibg=#2C323C
 " Define user color group User3, modifier sign(for gruvbox-material, medium).
 hi User2 cterm=bold ctermfg=175 gui=bold guifg=#d3869b ctermbg=236 guibg=#32302f
 
+
 " A function to display Error and Warning in statusline(for coc-nvim).
 " use :h coc-status for more info.
 function! StatusDiagnostic() abort
     let info = get(b:, 'coc_diagnostic_info', {})
-	if empty(info) | return '' | endif
+	if empty(info) | return get(g:, 'coc_status', '')| endif
 	let msgs = []
     if !get(info, 'error', 0) && !get(info, 'warning', 0)
-        return ' ✅ ' 
+        return ' ✅' . get(g:, 'coc_status', '') 
     endif
 	if get(info, 'error', 0) && !get(info, 'warning', 0)
 	    call add(msgs, ' ❌↪' . info['error'])
@@ -442,7 +569,7 @@ function! StatusDiagnostic() abort
         call add(msgs, ' ❌↪' . info['error'])
 	    call add(msgs, '⚠️ ↪' . info['warning'])
 	endif
-	return join(msgs, ' ') . ' ' . get(g:, 'coc_status', '')
+	return join(msgs, ' ') . '' . get(g:, 'coc_status', '')
 endfunction
 
 " Clear status line when vimrc is reloaded.
