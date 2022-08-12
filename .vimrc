@@ -106,7 +106,7 @@ set rtp+=/opt/homebrew/opt/fzf
 " **required for coc-nvim.
 set encoding=utf-8
 
-" Some servers have issues with backup files, see #649.
+" Some servers have issues with backup files, see # 649.
 " **required for coc-nvim.
 set nobackup
 set nowritebackup
@@ -128,7 +128,6 @@ call plug#begin('~/.vim/plugged')
 " ** Color Schemes **
   Plug 'joshdick/onedark.vim'
   Plug 'NLKNguyen/papercolor-theme'
-  Plug 'sainnhe/gruvbox-material'
 " ** Functionality
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'preservim/nerdtree'
@@ -399,14 +398,7 @@ if &term =~ '256color'
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     set termguicolors
     set background=dark
-  " Set contrast.
-    " This configuration option should be placed before `colorscheme gruvbox-material`.
-    " Available values: 'hard', 'medium'(default), 'soft'
-      let g:gruvbox_material_background = 'medium'
-
-    " For better performance
-      let g:gruvbox_material_better_performance = 1
-      colorscheme gruvbox-material
+    colorscheme onedark 
   endif
 endif
 
@@ -545,9 +537,7 @@ endfunction
 " STATUS LINE ---------------------------------------------------------------- {{{
 
 " Define user color group User1, modifier sign (for one dark).
-hi User1 cterm=bold ctermfg=180 gui=bold guifg=#E5C07B ctermbg=236 guibg=#2C323C
-" Define user color group User3, modifier sign(for gruvbox-material, medium).
-hi User2 cterm=bold ctermfg=175 gui=bold guifg=#d3869b ctermbg=236 guibg=#32302f
+hi User1 cterm=bold ctermfg=180 gui=bold guifg=#E5C07B ctermbg=236 guibg=#2D3C56
 
 
 " A function to display Error and Warning in statusline(for coc-nvim).
@@ -557,7 +547,7 @@ function! StatusDiagnostic() abort
 	if empty(info) | return get(g:, 'coc_status', '')| endif
 	let msgs = []
     if !get(info, 'error', 0) && !get(info, 'warning', 0)
-        return ' ✅' . get(g:, 'coc_status', '') 
+        return ' ✅ ' . get(g:, 'coc_status', '') 
     endif
 	if get(info, 'error', 0) && !get(info, 'warning', 0)
 	    call add(msgs, ' ❌↪' . info['error'])
@@ -576,7 +566,7 @@ endfunction
 set statusline=
 
 " Status line left side.
-set statusline+=\ %F\%2*%{&modified?'❲+❳':''}%*\ %Y\ %R
+set statusline+=\ %F\%1*%{&modified?'❲+❳':''}%*\ %Y\ %R
 
 " Use a divider to separate the left side from the right side.
 set statusline+=%=
