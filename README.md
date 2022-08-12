@@ -28,11 +28,9 @@ Now inside Vim Enter -->  :CocInstall coc-json coc-vimlsp coc-pyright coc-tsserv
 Visit Coc.nvim repository for more info: https://github.com/neoclide/coc.nvim
 
 You can edit coc-settings.json inside vim, use the following command --> :CocConfig
-<img width="1247" alt="Screen Shot 2022-07-28 at 22 35 08" src="https://user-images.githubusercontent.com/108837766/181640322-81a96bb7-2f23-4ec4-80b1-6df0ee78231c.png">
 
-<img width="1247" alt="Screen Shot 2022-07-28 at 22 36 39" src="https://user-images.githubusercontent.com/108837766/181640359-a5a58460-9833-469b-90d5-09b4ba233838.png">
+<img width="1084" alt="Screen Shot 2022-08-13 at 0 05 22" src="https://user-images.githubusercontent.com/108837766/184444951-d963f872-078f-4188-98ca-592e7f09bec1.png">
 
-<img width="1247" alt="Screen Shot 2022-07-29 at 0 22 38" src="https://user-images.githubusercontent.com/108837766/181640380-86eb30f9-2c5e-460e-839b-71c1e045af9c.png">
 
 
 
