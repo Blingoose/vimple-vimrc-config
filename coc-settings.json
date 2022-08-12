@@ -1,0 +1,55 @@
+{
+  "coc.preferences.formatOnSaveFiletypes": [
+    "css",
+    "html",
+    "markdown",
+    "javascript",
+    "typescript",
+    "yaml",
+    "json",
+    "python"
+  ],
+  // python config
+  "python.formatting.provider": "black",
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+
+  // coc-prettier config
+  "prettier.statusItemText": "🅟",
+  
+  // snippets config
+  "snippets.userSnippetsDirectory": "~/.vim/snippets",
+
+  // completion symbols
+  "suggest.completionItemKindLabels": {
+    "method": "  method",
+    "function": "  function",
+    "variable": "[] variable",
+    "field": "  field",
+    "typeParameter": "❬❭ typeParam",
+    "constant": "  constant",
+    "class": " פּ class",
+    "interface": " 蘒interface",
+    "struct": "  struct",
+    "event": "  event",
+    "operator": "  operator",
+    "module": "  module",
+    "property": "  property",
+    "enum": " 練enum",
+    "reference": "  reference",
+    "keyword": "  keyword",
+    "file": "  file",
+    "folder": " ﱮ folder",
+    "color": "  color",
+    "unit": " 塞unit",
+    "snippet": "  snippet",
+    "text": "  text",
+    "constructor": "  constructor",
+    "value": "  value",
+    "enumMember": "  enumMember"
+  },
+
+  // coc-highlight config
+  "highlight.colors.enable": true,
+  "colors.filetypes": ["*"]
+}
