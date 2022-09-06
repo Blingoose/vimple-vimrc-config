@@ -19,6 +19,7 @@
   
   // snippets config
   "snippets.userSnippetsDirectory": "~/.vim/snippets",
+  "snippet.statusText": "",
 
   // completion symbols
   "suggest.completionItemKindLabels": {
@@ -51,5 +52,5 @@
 
   // coc-highlight config
   "highlight.colors.enable": true,
-  "colors.filetypes": ["*"]
+  "colors.filetypes": ["vim", "html", "css"]
 }

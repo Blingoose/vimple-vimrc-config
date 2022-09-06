@@ -402,6 +402,10 @@ if &term =~ '256color'
   endif
 endif
 
+" Pum completions colors
+hi CocMenuSel ctermbg=39 guibg=#000000
+hi CocSearch ctermfg=12 guifg=#F16B0F
+
 " Remove trailing whitespace from Python files.
 autocmd BufWritePre *.py :%s/\s\+$//e
 
