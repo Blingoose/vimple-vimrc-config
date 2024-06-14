@@ -1,27 +1,16 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": [
-    "css",
-    "html",
-    "markdown",
-    "javascript",
-    "typescript",
-    "yaml",
-    "json",
-    "python"
-  ],
-  // python config
+  //format on save
+  "coc.preferences.formatOnSave": true,
+
+  //python
   "python.formatting.provider": "black",
   "python.linting.enabled": true,
   "python.linting.flake8Enabled": true,
 
-  // coc-prettier config
+  //prettier
   "prettier.statusItemText": "🅟",
-  
-  // snippets config
-  "snippets.userSnippetsDirectory": "~/.vim/snippets",
-  "snippet.statusText": "",
 
-  // completion symbols
+  // coc lsp icons
   "suggest.completionItemKindLabels": {
     "method": "  method",
     "function": "  function",
@@ -50,7 +39,14 @@
     "enumMember": "  enumMember"
   },
 
-  // coc-highlight config
-  "highlight.colors.enable": true,
-  "colors.filetypes": ["vim", "html", "css"]
+  "diagnostic.errorSign": "●",
+  "diagnostic.warningSign": "●",
+  "diagnostic.infoSign": "●",
+  "diagnostic.hintSign": "●",
+  "diagnostic.checkCurrentLine": true,
+  "diagnostic.virtualText": true,
+  "diagnostic.virtualTextCurrentLineOnly": false,
+
+  // coc highlight
+  "highlight.colors.enable": true
 }
