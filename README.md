@@ -29,7 +29,9 @@ Visit Coc.nvim repository for more info: https://github.com/neoclide/coc.nvim
 
 You can edit coc-settings.json inside vim, use the following command --> :CocConfig
 
-<img width="1084" alt="Screen Shot 2022-08-13 at 0 05 22" src="https://user-images.githubusercontent.com/108837766/184444951-d963f872-078f-4188-98ca-592e7f09bec1.png">
+<img width="868" alt="Screenshot 2024-06-16 at 0 57 21" src="https://github.com/Blingoose/vimple_vimrc_config/assets/108837766/5039e015-45f7-4a1f-88fb-e2dc6bae5593">
+
+<img width="1101" alt="Screenshot 2024-06-16 at 1 03 48" src="https://github.com/Blingoose/vimple_vimrc_config/assets/108837766/16351b69-27d1-4a0e-b685-7a86ab53679d">
 
 
 
