@@ -560,9 +560,6 @@ endfunction
 
 " STATUS LINE ---------------------------------------------------------------- {{{
 
-" Define user color group User1, modifier sign (for one dark).
-" hi User1 cterm=bold ctermfg=180 gui=bold guifg=#E5C07B ctermbg=236 guibg=#2D3C56
-
 set laststatus=2
 
 let g:lightline = {
@@ -589,9 +586,7 @@ let g:lightline = {
 \     'readonly': 'LightlineReadonly',
 \     'modified': 'LightlineModified',
 \     'filetype': 'LightlineFiletype',
-\     'cocstatus': 'LightlineDiagnostic',
 \     'gitbranch': 'MyFugitiveHead',
-\     'cocstatus_error': 'LightlineDiagnosticError'
 \   },
 \   'component_expand': {
 \     'cocstatus_error': 'LightlineDiagnosticError',
@@ -614,14 +609,6 @@ endfunction
 
 autocmd User CocDiagnosticChange call UpdateDiagnostics()
 
-function MyFugitiveHead()
-  let head = FugitiveHead()
-  if head != ""
-    let head = "\uf126 " .. head
-  endif
-  return head
-endfunction
-
 function! LightlineDiagnosticError() abort
     let l:info = get(b:, 'coc_diagnostic_info', {})
     return has_key(l:info, 'error') && l:info['error'] > 0 ? ' ' . l:info['error'] : ''
@@ -640,6 +627,14 @@ endfunction
 function! LightlineDiagnosticHint() abort
     let l:info = get(b:, 'coc_diagnostic_info', {})
     return has_key(l:info, 'hint') && l:info['hint'] > 0 ? ' ' . l:info['hint'] : ''
+endfunction
+
+function! MyFugitiveHead() abort
+  let head = FugitiveHead()
+  if head != ""
+    let head = "\uf126 " .. head
+  endif
+  return head
 endfunction
 
 function! LightlineLineinfo() abort
