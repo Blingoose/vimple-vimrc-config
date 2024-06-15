@@ -566,14 +566,15 @@ endfunction
 set laststatus=2
 
 let g:lightline = {
-\   'colorscheme': 'onedark',
+\   'colorscheme': 'solarized',
 \   'active': {
 \    'left' :[ [ 'mode', 'paste' ],
-\              [ 'readonly', 'filename', 'modified' ]
+\              ['readonly', 'filename', 'modified' ],
+\              ['gitbranch']
 \            ],
 \    'right':[ [ 'percent', 'lineinfo' ], 
 \              [ 'filetype'  ],
-\              [ 'cocstatus' ]
+\              ['cocstatus_error', 'cocstatus_warning', 'cocstatus_info', 'cocstatus_hint']
 \            ]
 \   },
 \   'separator': {
@@ -589,34 +590,60 @@ let g:lightline = {
 \     'modified': 'LightlineModified',
 \     'filetype': 'LightlineFiletype',
 \     'cocstatus': 'LightlineDiagnostic',
+\     'gitbranch': 'MyFugitiveHead',
+\     'cocstatus_error': 'LightlineDiagnosticError'
 \   },
+\   'component_expand': {
+\     'cocstatus_error': 'LightlineDiagnosticError',
+\     'cocstatus_warning':'LightlineDiagnosticWarning',
+\     'cocstatus_hint':'LightlineDiagnosticHint',
+\     'cocstatus_info':'LightlineDiagnosticInfo'
+\
+    \ },
+\  'component_type': {
+\     'cocstatus_error': 'error',
+\     'cocstatus_warning': 'warning',
+\     'cocstatus_info': 'info',
+\     'cocstatus_hint': 'hint'
+\ }
 \}
 
-function! LightlineDiagnostic() abort
+function! UpdateDiagnostics() abort
+  call lightline#update()
+endfunction
+
+autocmd User CocDiagnosticChange call UpdateDiagnostics()
+
+function MyFugitiveHead()
+  let head = FugitiveHead()
+  if head != ""
+    let head = "\uf126 " .. head
+  endif
+  return head
+endfunction
+
+function! LightlineDiagnosticError() abort
     let l:info = get(b:, 'coc_diagnostic_info', {})
+    return has_key(l:info, 'error') && l:info['error'] > 0 ? ' ' . l:info['error'] : ''
+endfunction
 
-    if empty(l:info)
-        return ''
-    endif
+function! LightlineDiagnosticWarning() abort
+    let l:info = get(b:, 'coc_diagnostic_info', {})
+    return has_key(l:info, 'warning') && l:info['warning'] > 0 ? ' ' . l:info['warning'] : ''
+endfunction
 
-    let l:parts = []
-    if get(l:info, 'error', 0)
-        call add(l:parts, '❌↪' . l:info['error'])
-    endif
-    if get(l:info, 'warning', 0)
-        call add(l:parts, '⚠️ ↪' . l:info['warning'])
-    endif
-    if get(l:info, 'information', 0)
-        call add(l:parts, 'ℹ️ ↪' . l:info['information'])
-    endif
-    if get(l:info, 'hint', 0)
-        call add(l:parts, '💡↪' . l:info['hint'])
-    endif
-    return join(l:parts, ' ')
+function! LightlineDiagnosticInfo() abort
+    let l:info = get(b:, 'coc_diagnostic_info', {})
+    return has_key(l:info, 'information') && l:info['information'] > 0 ? ' ' . l:info['information'] : ''
+endfunction
+
+function! LightlineDiagnosticHint() abort
+    let l:info = get(b:, 'coc_diagnostic_info', {})
+    return has_key(l:info, 'hint') && l:info['hint'] > 0 ? ' ' . l:info['hint'] : ''
 endfunction
 
 function! LightlineLineinfo() abort
-    if winwidth(0) < 86
+    if winwidth(0) < 76
         return ''
     endif
 
@@ -647,7 +674,7 @@ endfunction
 
 function! LightlineFiletype() abort
     let l:icon = WebDevIconsGetFileTypeSymbol()
-    return winwidth(0) > 86 ? (strlen(&filetype) ? &filetype . ' ' . l:icon : l:icon) : ''
+    return winwidth(0) > 76 ? (strlen(&filetype) ? &filetype . ' ' . l:icon : l:icon) : ''
 endfunction
 
 " }}}
