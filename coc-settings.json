@@ -2,6 +2,9 @@
   //format on save
   "coc.preferences.formatOnSave": true,
 
+  //typescript | javascript
+  "typescript.updateImportsOnFileMove.enabled": "prompt",
+
   //python
   "python.formatting.provider": "black",
   "python.linting.enabled": true,
@@ -39,6 +42,9 @@
     "enumMember": "  enumMember"
   },
 
+  //coc diagnostics
+  "diagnostic.enableMessage": "jump",
+  "diagnostic.refreshOnInsertMode": true,
   "diagnostic.errorSign": "●",
   "diagnostic.warningSign": "●",
   "diagnostic.infoSign": "●",

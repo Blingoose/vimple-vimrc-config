@@ -229,7 +229,7 @@ tnoremap <leader>n <C-\><C-n>
 
 " NERDTree specific mappings.
 " Map the ± key to toggle NERDTree open and close.
-nnoremap ± :NERDTreeToggle<cr>
+nnoremap ± :NERDTreeToggle<CR>
 
 " }}}
 
@@ -240,28 +240,21 @@ nnoremap ± :NERDTreeToggle<cr>
 " no select by `"suggest.noselect": true` in your configuration file
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config
-inoremap <silent><expr> <TAB>
-      \ coc#pum#visible() ? coc#pum#next(1) :
-      \ CheckBackspace() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+    inoremap <silent><expr> <C-x><C-z> coc#pum#visible() ? coc#pum#stop() : "\<C-x>\<C-z>"
+    inoremap <silent><expr> <TAB>
+        \ coc#pum#visible() ? coc#pum#next(1):
+        \ CheckBackspace() ? "\<Tab>" :
+        \ coc#refresh()
+    inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
-" Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" Use <ctrl-tab> to trigger on/off completion
+    inoremap <silent><expr> <Esc>[1;5I coc#pum#visible() ? coc#pum#stop() : coc#refresh()
 
 function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
-
-" Use <c-space> to trigger completion
-if has('nvim')
-  inoremap <silent><expr> <Esc>[1;5I coc#refresh()
-else
-  inoremap <silent><expr> <Esc>[1;5I coc#refresh()
-endif
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
@@ -375,6 +368,24 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+" Custom Mappongs
+" Initialize the variable to track the state of the diagnostic float window
+let g:diagnostic_float_open = 0
+
+" Function to toggle the diagnostic float window
+function! ToggleDiagnosticFloat()
+  if g:diagnostic_float_open
+    call coc#float#close_all()
+    let g:diagnostic_float_open = 0
+  else
+    execute "normal! \<Plug>(coc-diagnostic-info)"
+    let g:diagnostic_float_open = 1
+  endif
+endfunction
+
+" Map <leader><leader> to toggle the diagnostic float window
+nnoremap <silent> <leader><leader> :call ToggleDiagnosticFloat()<CR>
 
 " }}}
 
