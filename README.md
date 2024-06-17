@@ -10,6 +10,10 @@ Welcome to my Vim setup, where Vim and Simple combine to create Vimple—a strai
    ```
 4. Download and install **Vim Plug**:
    - [Vim Plug GitHub](https://github.com/junegunn/vim-plug)
+   ```bash
+   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+   ```
 5. Copy my `.vimrc` file or parts from it to your `$HOME` directory.
 6. Open Vim, ignore any startup errors, and run:
    ```
