@@ -374,12 +374,12 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 let g:diagnostic_float_open = 0
 
 " Function to toggle the diagnostic float window
-function! ToggleDiagnosticFloat()
+function! ToggleDiagnosticFloat() abort
   if g:diagnostic_float_open
     call coc#float#close_all()
     let g:diagnostic_float_open = 0
   else
-    execute "normal! \<Plug>(coc-diagnostic-info)"
+    call CocActionAsync('diagnosticInfo')
     let g:diagnostic_float_open = 1
   endif
 endfunction
