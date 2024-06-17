@@ -2,8 +2,8 @@ Welcome to my Vim setup, where Vim and Simple combine to create Vimple—a strai
 
 ## Preparation
 
-1. Download **Vim** (not Neovim).
-2. Download **Node.js**.
+1. Download Vim (not Neovim).
+2. Download Node.js.
 3. Create the necessary directories:
    ```bash
    mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/plugged
@@ -115,9 +115,8 @@ Below is a list of all key bindings and their actions from the `.vimrc`:
 
 ### Special Note on Keybinding Customization
 
-1) The default behavior for toggling CoC completion is typically `<c-space>`, which may not work well on macOS. It is recommended to customize this mapping to fit your terminal and preferences. For example:
-
-**<c-space>** is the default behavior. Any other mapping is encouraged, such as using `<leader>df` if `<c-space>` is problematic on macOS.
+1) The default behavior for toggling CoC completion is typically `<c-space>`, which may not work well on macOS. It is recommended to customize this mapping to fit your terminal and preferences. In my case I configured it to use `<Esc>[1;5I` (it's Ctrl+ Tab for me), but
+`<c-space>` is the default behavior. Any other mapping is encouraged, such as using `<leader>df`.
 
 Here's an example of a custom mapping that can be adapted:
 ```vim
@@ -125,7 +124,7 @@ inoremap <silent><expr> <c-space> coc#pum#visible() ? coc#pum#stop() : coc#refre
 ```
 This is something you might want to tweak to ensure optimal performance with your specific terminal setup.
 
-2) The mapping nnoremap ± :NERDTreeToggle<CR> is a very personal setting of the creator and might not be suitable for everyone. It is encouraged to change this mapping to something that fits your preference better.
+2) The mapping `nnoremap ± :NERDTreeToggle<CR>` is a very personal setting of the creator and might not be suitable for everyone. It is encouraged to change this mapping to something that fits your preference better.
 Here's an example of a custom mapping that can be adapted:
 ```vim
 nnoremap <leader>e :NERDTreeToggle<CR>
