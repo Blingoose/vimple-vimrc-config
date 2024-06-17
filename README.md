@@ -17,8 +17,10 @@ Welcome to my Vim setup, where Vim and Simple combine to create Vimple—a strai
    ```
 7. Close and reopen Vim.
 8. Configure the `.vimrc` to suit your style.
-9. Enjoy and keep it simple.
-
+9. Download and install nerd font:
+- [Download Meslo nerd font](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#meslo-nerd-font-patched-for-powerlevel10k)
+10. Enjoy and keep it simple.
+  
 ## Using Coc for Completion
 
 The provided `coc-settings.json` is configured mainly for Python and web development.
