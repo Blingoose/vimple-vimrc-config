@@ -23,6 +23,7 @@ Welcome to my Vim setup, where Vim and Simple combine to create Vimple—a strai
 8. Configure the `.vimrc` to suit your style.
 9. Download and install nerd font:
    - [Download Meslo nerd font](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#meslo-nerd-font-patched-for-powerlevel10k)
+   - set your terminal to use newly installed meslo font.
 10. Enjoy and keep it simple.
   
 ## Using Coc for Completion
