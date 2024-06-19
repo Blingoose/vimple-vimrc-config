@@ -12,6 +12,8 @@
 " Press 'zo' to fold-open.
 " Press 'zm' to fold-close.
 
+" DEFAULTS ---------------------------------------------------------------- {{{
+
 " Disable compatibility with vi which can cause unexpected issues.
 set nocompatible
 
@@ -121,6 +123,8 @@ set updatetime=300
 " **required for coc-nvim.
 set signcolumn=yes
 
+" }}}
+
 " PLUGINS ---------------------------------------------------------------- {{{
 
 call plug#begin('~/.vim/plugged')
@@ -137,7 +141,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'ryanoasis/vim-devicons'
   Plug 'jlanzarotta/bufexplorer'
   Plug 'tpope/vim-fugitive'
-
+  Plug 'philrunninger/nerdtree-visual-selection'
 call plug#end()
 
 " }}}
@@ -151,7 +155,7 @@ let mapleader = ','
 nnoremap \\ ``
 
 " Press <leader>h to turn off search highlighting.
-nnoremap <leader>h :nohlsearch<CR>
+nnoremap <silent> <leader>h :nohlsearch<CR>
 
 " Type jk to exit insert mode quickly.
 " inoremap jk <Esc>
@@ -229,7 +233,7 @@ tnoremap <leader>n <C-\><C-n>
 
 " NERDTree specific mappings.
 " Map the ± key to toggle NERDTree open and close.
-nnoremap ± :NERDTreeToggle<CR>
+nnoremap <silent> ± :NERDTreeToggle<CR>
 
 " }}}
 
@@ -389,7 +393,7 @@ nnoremap <silent> <leader><leader> :call ToggleDiagnosticFloat()<CR>
 
 " }}}
 
-" VIM SCRIPT ---------------------------------------------------------------- {{{
+" GENERAL VIM SCRIPT ---------------------------------------------------------------- {{{
 
 " Auto-resize splits when Vim get resized.
 function! ResizeWindows()
@@ -439,10 +443,27 @@ autocmd BufWritePre *.py :%s/\s\+$//e
 " Remove blank lines at the end of the file.
 autocmd BufWritePre *.py :%s/\(\n\)\+\%$//e
 
+" }}}
+
+" NERDTREE EXPLORER ---------------------------------------------------------------- {{{
+" Group autocommands for NERDTree cursorline handling
+augroup NERDTreeCursorLine
+  autocmd!
+  autocmd BufEnter * if &filetype == 'nerdtree' | setlocal cursorline | endif
+  autocmd BufLeave * if &filetype == 'nerdtree' | setlocal nocursorline | endif
+augroup END
+
+"Hide nerdtree statusline
+let g:NERDTreeStatusline=-1
 
 " Have nerdtree ignore certain files and directories.
 let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
 
+" Exit Vim if NERDTree is the only window remaining in the only tab.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
+
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
 " }}}
 
 " RUN PYTHON & NODE SCRIPT ---------------------------------------------------------------- {{{
@@ -571,105 +592,123 @@ endfunction
 
 " STATUS LINE ---------------------------------------------------------------- {{{
 
+" Always display the status line
 set laststatus=2
 
+" Initialize variables to store git branch name and number of changes
+let g:git_branch = ''
+let g:git_changes = 0
+
+" Configuration for the Lightline plugin
 let g:lightline = {
-\   'colorscheme': 'solarized',
+\   'colorscheme': 'solarized',  
 \   'active': {
-\    'left' :[ [ 'mode', 'paste' ],
-\              ['readonly', 'filename', 'modified' ],
-\              ['gitbranch']
+\    'left' :[ [ 'mode', 'paste' ],  
+\              [ 'readonly', 'filename', 'modified' ],  
+\              [ 'gitbranch' ]  
 \            ],
-\    'right':[ [ 'percent', 'lineinfo' ], 
-\              [ 'filetype'  ],
-\              ['cocstatus_error', 'cocstatus_warning', 'cocstatus_info', 'cocstatus_hint']
+\    'right':[ [ 'percent', 'lineinfo' ],  
+\              [ 'filetype' ],  
+\              [ 'cocstatus_error', 'cocstatus_warning', 'cocstatus_info', 'cocstatus_hint' ]  
 \            ]
 \   },
 \   'separator': {
-\     'left': '', 'right': ''
+\     'left': '', 'right': ''  
 \   },
 \   'subseparator': {
-\     'left': '', 'right': ''
+\     'left': '', 'right': ''  
 \   },
 \   'component_function': {
-\     'lineinfo': 'LightlineLineinfo',
-\     'mode': 'LightlineMode',
-\     'readonly': 'LightlineReadonly',
-\     'modified': 'LightlineModified',
-\     'filetype': 'LightlineFiletype',
-\     'gitbranch': 'MyFugitiveHead',
+\     'mode': 'LightlineMode', 
+\     'percent': 'LightlinePercent',
+\     'filename': 'LightlineFilename',
+\     'lineinfo': 'LightlineLineinfo',  
+\     'readonly': 'LightlineReadonly',  
+\     'modified': 'LightlineModified',  
+\     'filetype': 'LightlineFiletype',  
+\     'gitbranch': 'LightlineGitInfo',  
 \   },
 \   'component_expand': {
-\     'cocstatus_error': 'LightlineDiagnosticError',
-\     'cocstatus_warning':'LightlineDiagnosticWarning',
-\     'cocstatus_hint':'LightlineDiagnosticHint',
-\     'cocstatus_info':'LightlineDiagnosticInfo'
-\
-    \ },
-\  'component_type': {
-\     'cocstatus_error': 'error',
-\     'cocstatus_warning': 'warning',
-\     'cocstatus_info': 'info',
-\     'cocstatus_hint': 'hint'
-\ }
+\     'cocstatus_error': 'LightlineDiagnosticError',  
+\     'cocstatus_warning': 'LightlineDiagnosticWarning',  
+\     'cocstatus_hint': 'LightlineDiagnosticHint',  
+\     'cocstatus_info': 'LightlineDiagnosticInfo',
+\   },
+\   'component_type': {
+\     'cocstatus_error': 'error',  
+\     'cocstatus_warning': 'warning',  
+\     'cocstatus_info': 'info',  
+\     'cocstatus_hint': 'hint',
+\   }
 \}
 
-function! UpdateDiagnostics() abort
-  call lightline#update()
-endfunction
-
-autocmd User CocDiagnosticChange call UpdateDiagnostics()
-
+" Function to get CoC diagnostic errors
 function! LightlineDiagnosticError() abort
     let l:info = get(b:, 'coc_diagnostic_info', {})
     return has_key(l:info, 'error') && l:info['error'] > 0 ? ' ' . l:info['error'] : ''
 endfunction
 
+" Function to get CoC diagnostic warnings
 function! LightlineDiagnosticWarning() abort
     let l:info = get(b:, 'coc_diagnostic_info', {})
     return has_key(l:info, 'warning') && l:info['warning'] > 0 ? ' ' . l:info['warning'] : ''
 endfunction
 
+" Function to get CoC diagnostic information
 function! LightlineDiagnosticInfo() abort
     let l:info = get(b:, 'coc_diagnostic_info', {})
     return has_key(l:info, 'information') && l:info['information'] > 0 ? ' ' . l:info['information'] : ''
 endfunction
 
+" Function to get CoC diagnostic hints
 function! LightlineDiagnosticHint() abort
     let l:info = get(b:, 'coc_diagnostic_info', {})
     return has_key(l:info, 'hint') && l:info['hint'] > 0 ? ' ' . l:info['hint'] : ''
 endfunction
 
-function! MyFugitiveHead() abort
-  let head = FugitiveHead()
-  if head != ""
-    let head = "\uf126 " .. head
-  endif
-  return head
+" Function for filename section in Lightline
+function! LightlineFilename()
+    if &filetype == 'nerdtree'
+        return 'NERDTree'
+    endif
+    let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+    return filename 
 endfunction
 
+" Function to get line information for Lightline
 function! LightlineLineinfo() abort
-    if winwidth(0) < 76
+    if winwidth(0) < 76 || &filetype == 'nerdtree'
         return ''
     endif
-
     let l:current_line = line('.')
     let l:max_line = line('$')
     let l:lineinfo = l:current_line . '/' . l:max_line
     return l:lineinfo
-   endfunction
+endfunction
 
+" Function to display the percent component for Lightline
+function! LightlinePercent() abort
+    if &ft !=? 'nerdtree'
+        return line('.') * 100 / line('$') . '%'
+    else
+        return ''
+    endif
+endfunction
+
+" Function to indicate if the buffer is modified
 function! LightlineModified() abort
     return &modified ? '●' : ''
 endfunction
 
+" Function to display the mode for Lightline
 function! LightlineMode() abort
     let ftmap = {
-                \ 'nerdtree': 'EXPLORER',
+                \ 'nerdtree': '',
                 \ }
     return get(ftmap, &filetype, lightline#mode())
 endfunction
 
+" Function to display read-only status for Lightline
 function! LightlineReadonly() abort
     let ftmap = {
                 \ 'nerdtree': '',
@@ -678,9 +717,63 @@ function! LightlineReadonly() abort
     return &readonly ? l:char : ''
 endfunction
 
+" Function to display file type for Lightline
 function! LightlineFiletype() abort
+    if &filetype == 'nerdtree'
+        return ''
+    endif   
     let l:icon = WebDevIconsGetFileTypeSymbol()
     return winwidth(0) > 76 ? (strlen(&filetype) ? &filetype . ' ' . l:icon : l:icon) : ''
 endfunction
+
+" Function to update the Lightline status line
+function! UpdateLightline() abort
+    call lightline#update()
+endfunction
+
+" Function to update git information
+function! UpdateGitInfo() abort
+    if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile'
+        let g:git_branch = ''
+        let g:git_changes = 0
+    elseif executable('git')
+        let g:git_branch = GetCurrentGitBranch()  " Get current git branch
+        let g:git_changes = GetGitChanges()       " Get number of changes
+    else
+        let g:git_branch = ''
+        let g:git_changes = 0
+    endif
+endfunction
+
+" Function to get the current git branch
+function! GetCurrentGitBranch() abort
+    let head = FugitiveHead()
+    if head != ""
+        let head = "\uf126 " . head  " Add an icon before the branch name
+    endif
+    return head
+endfunction
+
+" Function to get the number of git changes
+function! GetGitChanges() abort
+    let changes = len(filter(systemlist('git -C ' . expand('%:p:h') . ' status --porcelain 2>/dev/null'), 'v:val !=# ""'))
+    return changes
+endfunction
+
+" Function to display git information in Lightline
+function! LightlineGitInfo() abort
+    return g:git_branch . (g:git_changes > 0 ? ' +' . g:git_changes : '')
+endfunction
+
+autocmd TabEnter * silent! call UpdateGitInfo()
+
+" Autocommand to update git info when a buffer is entered
+autocmd BufEnter * silent! call UpdateGitInfo()
+
+" Autocommand to update git info when a buffer is written
+autocmd BufWritePost * silent! call UpdateGitInfo()
+
+" Autocommand to update the Lightline status line when CoC diagnostics change
+autocmd User CocDiagnosticChange call UpdateLightline()
 
 " }}}
