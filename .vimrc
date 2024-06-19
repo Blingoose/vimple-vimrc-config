@@ -713,7 +713,7 @@ function! LightlineReadonly() abort
     let ftmap = {
                 \ 'nerdtree': '',
                 \ }
-    let l:char = get(ftmap, &filetype, '')
+    let l:char = get(ftmap, &filetype, '')
     return &readonly ? l:char : ''
 endfunction
 
