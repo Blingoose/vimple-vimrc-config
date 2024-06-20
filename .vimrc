@@ -116,7 +116,7 @@ set nowritebackup
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
 " **required for coc-nvim.
-set updatetime=300
+set updatetime=100
 
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
@@ -142,6 +142,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'jlanzarotta/bufexplorer'
   Plug 'tpope/vim-fugitive'
   Plug 'philrunninger/nerdtree-visual-selection'
+  Plug 'airblade/vim-gitgutter'
 call plug#end()
 
 " }}}
@@ -453,8 +454,10 @@ augroup NERDTreeCursorLine
   autocmd BufLeave * if &filetype == 'nerdtree' | setlocal nocursorline | endif
 augroup END
 
-"Hide nerdtree statusline
-let g:NERDTreeStatusline=-1
+" Hide nerdtree statusline
+let g:NERDTreeStatusline= -1
+" Show hidden files
+let g:NERDTreeShowHidden = 1
 
 " Have nerdtree ignore certain files and directories.
 let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
@@ -597,7 +600,7 @@ set laststatus=2
 
 " Initialize variables to store git branch name and number of changes
 let g:git_branch = ''
-let g:git_changes = 0
+let g:git_files_changed = 0
 
 " Configuration for the Lightline plugin
 let g:lightline = {
@@ -605,7 +608,7 @@ let g:lightline = {
 \   'active': {
 \    'left' :[ [ 'mode', 'paste' ],  
 \              [ 'readonly', 'filename', 'modified' ],  
-\              [ 'gitbranch' ]  
+\              [ 'gitstatus', 'gitcurrentchanges' ]  
 \            ],
 \    'right':[ [ 'percent', 'lineinfo' ],  
 \              [ 'filetype' ],  
@@ -626,7 +629,8 @@ let g:lightline = {
 \     'readonly': 'LightlineReadonly',  
 \     'modified': 'LightlineModified',  
 \     'filetype': 'LightlineFiletype',  
-\     'gitbranch': 'LightlineGitInfo',  
+\     'gitstatus': 'LightlineGitInfo',
+\     'gitcurrentchanges': 'GetCurrentGitChanges'
 \   },
 \   'component_expand': {
 \     'cocstatus_error': 'LightlineDiagnosticError',  
@@ -731,49 +735,71 @@ function! UpdateLightline() abort
     call lightline#update()
 endfunction
 
-" Function to update git information
-function! UpdateGitInfo() abort
-    if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile'
-        let g:git_branch = ''
-        let g:git_changes = 0
-    elseif executable('git')
-        let g:git_branch = GetCurrentGitBranch()  " Get current git branch
-        let g:git_changes = GetGitChanges()       " Get number of changes
-    else
-        let g:git_branch = ''
-        let g:git_changes = 0
-    endif
-endfunction
-
 " Function to get the current git branch
 function! GetCurrentGitBranch() abort
     let head = FugitiveHead()
-    if head != ""
-        let head = "\uf126 " . head  " Add an icon before the branch name
+    if head != ''
+        let head = " \uf126 " . head 
     endif
     return head
 endfunction
 
-" Function to get the number of git changes
-function! GetGitChanges() abort
+function! IsGitRepo()
+    let l:current_dir = expand('%:p:h')
+    return !empty(systemlist('git -C ' . l:current_dir . ' rev-parse --is-inside-work-tree 2>/dev/null'))
+endfunction
+
+
+" Function to get current file changes
+function! GetCurrentGitChanges() abort
+    if g:git_branch != '' && &filetype != 'nerdtree'
+        let [a,m,r] = GitGutterGetHunkSummary()
+        return printf('[+%d ~%d -%d]', a, m, r)
+    else
+        return ''    
+    endif
+endfunction
+
+" Function to update git information
+function! UpdateGitInfo() abort
+    if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile'
+        let g:git_branch = ''
+        let g:git_files_changed = 0
+    elseif executable('git')
+        let g:git_files_changed = GetGitFilesChanged()       
+        let g:git_branch = GetCurrentGitBranch()
+    else
+        let g:git_branch = ''
+        let g:git_files_changed = 0
+    endif
+endfunction
+
+" Function to get the number of files changed but not commited to git
+function! GetGitFilesChanged() abort
     let changes = len(filter(systemlist('git -C ' . expand('%:p:h') . ' status --porcelain 2>/dev/null'), 'v:val !=# ""'))
     return changes
 endfunction
 
 " Function to display git information in Lightline
 function! LightlineGitInfo() abort
-    return g:git_branch . (g:git_changes > 0 ? ' +' . g:git_changes : '')
+    if &filetype == 'nerdtree'
+        return ''
+    else
+    return (g:git_files_changed > 0 ? '+' . g:git_files_changed : '')  . g:git_branch
+    endif
 endfunction
 
-autocmd TabEnter * silent! call UpdateGitInfo()
+if IsGitRepo()
+  " Autocommand to update git info when a buffer is entered
+  autocmd BufEnter * silent! call UpdateGitInfo()
 
-" Autocommand to update git info when a buffer is entered
-autocmd BufEnter * silent! call UpdateGitInfo()
+  " Autocommand to update  git when tab is entered
+  autocmd TabEnter * silent! call UpdateGitInfo()
 
-" Autocommand to update git info when a buffer is written
-autocmd BufWritePost * silent! call UpdateGitInfo()
+  " Update git info when text changes in Normal mode
+  autocmd BufWritePost * call UpdateGitInfo()
+endif
 
 " Autocommand to update the Lightline status line when CoC diagnostics change
 autocmd User CocDiagnosticChange call UpdateLightline()
-
 " }}}
