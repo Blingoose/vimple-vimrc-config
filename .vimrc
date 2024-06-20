@@ -167,8 +167,8 @@ nnoremap o o<esc>
 nnoremap O O<esc>
 
 " Center the cursor vertically when moving to the next word during a search.
-nnoremap n nzz
-nnoremap N Nzz
+" nnoremap n nzz
+" nnoremap N Nzz
 
 " Yank from cursor to the end of line.
 nnoremap Y y$
@@ -214,10 +214,10 @@ nnoremap <c-l> <c-w>l
 
 " Resize split windows using arrow keys by pressing:
 " CTRL+UP, CTRL+DOWN, CTRL+LEFT, or CTRL+RIGHT.
-nnoremap <C-Left> :vertical resize -2<CR>
-nnoremap <C-Right> :vertical resize +2<CR>
-nnoremap <C-Up> :resize +2<CR>
-nnoremap <C-Down> :resize -2<CR>
+nnoremap <silent> <C-Left> :vertical resize -2<CR>
+nnoremap <silent> <C-Right> :vertical resize +2<CR>
+nnoremap <silent> <C-Up> :resize +2<CR>
+nnoremap <silent> <C-Down> :resize -2<CR>
 
 " Quick save
 nnoremap <leader>w :w<CR>
@@ -458,6 +458,8 @@ augroup END
 let g:NERDTreeStatusline= -1
 " Show hidden files
 let g:NERDTreeShowHidden = 1
+
+let g:nerdtree_vis_jumpmark = 1
 
 " Have nerdtree ignore certain files and directories.
 let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
@@ -785,7 +787,7 @@ function! LightlineGitInfo() abort
     if &filetype == 'nerdtree'
         return ''
     else
-    return (g:git_files_changed > 0 ? '+' . g:git_files_changed : '')  . g:git_branch
+    return (g:git_files_changed > 0 ? '+' . g:git_files_changed : '') . g:git_branch
     endif
 endfunction
 
@@ -802,4 +804,5 @@ endif
 
 " Autocommand to update the Lightline status line when CoC diagnostics change
 autocmd User CocDiagnosticChange call UpdateLightline()
+
 " }}}
