@@ -167,8 +167,8 @@ nnoremap o o<esc>
 nnoremap O O<esc>
 
 " Center the cursor vertically when moving to the next word during a search.
-" nnoremap n nzz
-" nnoremap N Nzz
+nnoremap n nzz
+nnoremap N Nzz
 
 " Yank from cursor to the end of line.
 nnoremap Y y$
@@ -458,8 +458,6 @@ augroup END
 let g:NERDTreeStatusline= -1
 " Show hidden files
 let g:NERDTreeShowHidden = 1
-
-let g:nerdtree_vis_jumpmark = 1
 
 " Have nerdtree ignore certain files and directories.
 let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
