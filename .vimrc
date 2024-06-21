@@ -383,13 +383,26 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " Custom Addition
 " Function to toggle the diagnostic float window
 function! ToggleDiagnosticFloat() abort
-  if g:diagnostic_float_open
-    call coc#float#close_all()
+  " Initialize g:diagnostic_float_open if it's not defined
+  if !exists('g:diagnostic_float_open')
     let g:diagnostic_float_open = 0
-  else
-    call CocActionAsync('diagnosticInfo')
-    let g:diagnostic_float_open = 1
   endif
+
+  " Toggle the diagnostic float window based on the current state with error handling
+  try
+    if g:diagnostic_float_open
+      call coc#float#close_all()
+      let g:diagnostic_float_open = 0
+    else
+      call CocActionAsync('diagnosticInfo')
+      let g:diagnostic_float_open = 1
+    endif
+  catch
+    " Handle exceptions by logging or silently ignoring them
+    echohl ErrorMsg | echom "Failed to toggle diagnostic float window: " . v:exception | echohl None
+    " Optionally reset the flag if an error occurs during opening
+    let g:diagnostic_float_open = 0
+  endtry
 endfunction
 
 " Map <leader><leader> to toggle the diagnostic float window
@@ -801,22 +814,32 @@ endfunction
 
 " Function to get current file changes
 function! GetCurrentGitChanges() abort
-    if g:git_branch != '' && &filetype != 'nerdtree' && &buftype != 'terminal' && &filetype != 'gitcommit'
-        try
-            let [a, m, r] = GitGutterGetHunkSummary()
-            return printf('[+%d ~%d -%d]', a, m, r)
-        catch
-            silent echom "GetCurrentGitBranch(): Error retrieving git changes"
-            return ''
-        endtry
-    else
+    " Only execute in relevant contexts
+    if &filetype =~ '^\(nerdtree\|gitcommit\)$' || &buftype == 'terminal'
         return ''
     endif
+
+    " Check if we're in a git managed repository and if there's an active branch
+    if empty(g:git_branch)
+        return ''
+    endif
+
+    " Safely try to fetch git hunk information
+    try
+        let [a, m, r] = GitGutterGetHunkSummary()
+        if a + m + r > 0
+            return printf('[+%d ~%d -%d]', a, m, r)
+        endif
+    catch
+        echom "Error retrieving git changes: " . v:exception
+    endtry
+
+    return ''
 endfunction
 
 " Function to update git information
 function! UpdateGitInfo() abort
-    " Don't update anything for these buftypes and filetypes
+    " Check if the current buffer type or file type should update git information
     if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile' || &buftype ==# 'terminal' || &filetype == 'gitcommit'
         " Clear git related global variables since they are irrelevant in this buffer
         let g:git_branch = ''
