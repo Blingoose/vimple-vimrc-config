@@ -1,5 +1,6 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                                                         "
+"                                                                         "
 "               ██╗   ██╗██╗███╗   ███╗██████╗  ██████╗                   "
 "               ██║   ██║██║████╗ ████║██╔══██╗██╔════╝                   "
 "               ██║   ██║██║██╔████╔██║██████╔╝██║                        "
@@ -112,6 +113,11 @@ set encoding=utf-8
 " **required for coc-nvim.
 set nobackup
 set nowritebackup
+
+" This allows you to undo changes to a file even after saving it.
+set undodir=~/.vim/backup
+set undofile  
+set undoreload=10000
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
@@ -238,7 +244,7 @@ nnoremap <silent> ± :NERDTreeToggle<CR>
 
 " }}}
 
-" COC SETTINGS & MAPPING ---------------------------------------------------------------- {{{
+" COC SETTINGS  ---------------------------------------------------------------- {{{
 
 " Use tab for trigger completion with characters ahead and navigate
 " NOTE: There's always complete item selected by default, you may want to enable
@@ -374,10 +380,7 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-" Custom Mappongs
-" Initialize the variable to track the state of the diagnostic float window
-let g:diagnostic_float_open = 0
-
+" Custom Addition
 " Function to toggle the diagnostic float window
 function! ToggleDiagnosticFloat() abort
   if g:diagnostic_float_open
@@ -396,31 +399,6 @@ nnoremap <silent> <leader><leader> :call ToggleDiagnosticFloat()<CR>
 
 " GENERAL VIM SCRIPT ---------------------------------------------------------------- {{{
 
-" Auto-resize splits when Vim get resized.
-function! ResizeWindows()
-    let savetab = tabpagenr()
-    tabdo wincmd =
-    execute 'tabnext' savetab
-endfunction
-autocmd VimResized * call ResizeWindows()
-
-" Enable the marker method of folding.
-augroup filetype_vim
-    autocmd!
-    autocmd FileType vim setlocal foldmethod=marker
-augroup END
-
-" If the current file type is HTML, set indentation to 2 spaces.
-autocmd Filetype html setlocal tabstop=2 shiftwidth=2 expandtab
-
-" If Vim version is equal to or greater than 7.3 enable undofile.
-" This allows you to undo changes to a file even after saving it.
-if version >= 703
-    set undodir=~/.vim/backup
-    set undofile
-    set undoreload=10000
-endif
-
 " Inspect $TERM instead of hardcoding t_Co=256.
 if &term =~ '256color'
   " Enable true (24-bit) colors instead of (8-bit) 256 colors.
@@ -438,42 +416,67 @@ endif
 hi CocMenuSel ctermbg=39 guibg=#000000
 hi CocSearch ctermfg=12 guifg=#F16B0F
 
-" Remove trailing whitespace from Python files on save.
-autocmd BufWritePre *.py :%s/\s\+$//e
+" Auto-resize splits when Vim get resized.
+function! ResizeWindows()
+    let savetab = tabpagenr()
+    tabdo wincmd =
+    execute 'tabnext' savetab
+endfunction
+autocmd VimResized * call ResizeWindows()
 
-" Remove blank lines at the end of the file.
-autocmd BufWritePre *.py :%s/\(\n\)\+\%$//e
+augroup FiletypeSettings
+    autocmd!
+    " Enable the marker method of folding.
+    autocmd FileType vim setlocal foldmethod=marker
+    " If the current file type is HTML, set indentation to 2 spaces.
+    autocmd Filetype html setlocal tabstop=2 shiftwidth=2 expandtab
+    " Autocommand to set filetype to terminal for terminal buffers
+    autocmd BufEnter term://* setlocal filetype=terminal
+augroup END
+
+augroup PythonFile
+    autocmd!
+    " Remove trailing whitespace from Python files on save.
+    autocmd BufWritePre *.py :%s/\s\+$//e
+    " Remove blank lines at the end of the file.
+    autocmd BufWritePre *.py :%s/\(\n\)\+\%$//e
+augroup END
 
 " }}}
 
 " NERDTREE EXPLORER ---------------------------------------------------------------- {{{
-" Group autocommands for NERDTree cursorline handling
-augroup NERDTreeCursorLine
-  autocmd!
-  autocmd BufEnter * if &filetype == 'nerdtree' | setlocal cursorline | endif
-  autocmd BufLeave * if &filetype == 'nerdtree' | setlocal nocursorline | endif
-augroup END
 
 " Hide nerdtree statusline
 let g:NERDTreeStatusline= -1
 " Show hidden files
 let g:NERDTreeShowHidden = 1
-
 " Have nerdtree ignore certain files and directories.
 let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
 
-" Exit Vim if NERDTree is the only window remaining in the only tab.
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
+" Group autocommands for NERDTree cursorline handling
+augroup NERDTreeCursorLine
+    autocmd!
+    " If filetype is (i.e if we focused on) NERDTree show cursorline
+    autocmd BufEnter * if &filetype == 'nerdtree' | setlocal cursorline | endif
+    " If filetype is not NERDTree hide cursorline
+    autocmd BufLeave * if &filetype == 'nerdtree' | setlocal nocursorline | endif
+augroup END
 
-" Close the tab if NERDTree is the only window remaining in it.
-autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
+" Exit Vim/Close Tab when NERDTree is the last window left
+augroup NERDTreeExitVim
+    autocmd!
+    " Exit Vim if NERDTree is the only window remaining in the only tab.
+    autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
+    " Close the tab if NERDTree is the only window remaining in it.
+    autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
+augroup END
 " }}}
 
 " RUN PYTHON & NODE SCRIPT ---------------------------------------------------------------- {{{
 
 " #####RUN PYTHON IN BUFFER WITH F5 #####
 " https://stackoverflow.com/questions/18948491/running-python-code-in-vim
-function! SaveAndExecutePython()
+function! SaveAndExecutePython() abort
     " SOURCE [reusable window]: https://github.com/fatih/vim-go/blob/master/autoload/go/ui.vim
 
     " save and reload current file
@@ -533,7 +536,7 @@ endfunction
 
 " #####RUN NODE IN BUFFER WITH F7 #####
 " https://stackoverflow.com/questions/18948491/running-python-code-in-vim
-function! SaveAndExecuteNode()
+function! SaveAndExecuteNode() abort
     " SOURCE [reusable window]: https://github.com/fatih/vim-go/blob/master/autoload/go/ui.vim
 
     " save and reload current file
@@ -674,6 +677,8 @@ endfunction
 function! LightlineFilename()
     if &filetype == 'nerdtree'
         return 'NERDTree'
+   elseif &buftype == 'terminal'
+        return 'Terminal'
     endif
     let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
     return filename 
@@ -681,7 +686,7 @@ endfunction
 
 " Function to get line information for Lightline
 function! LightlineLineinfo() abort
-    if winwidth(0) < 76 || &filetype == 'nerdtree'
+    if winwidth(0) < 76 || &filetype == 'nerdtree' || &buftype == 'terminal'
         return ''
     endif
     let l:current_line = line('.')
@@ -692,7 +697,7 @@ endfunction
 
 " Function to display the percent component for Lightline
 function! LightlinePercent() abort
-    if &ft !=? 'nerdtree'
+    if &filetype != 'nerdtree' &&  &buftype != 'terminal'
         return line('.') * 100 / line('$') . '%'
     else
         return ''
@@ -701,7 +706,11 @@ endfunction
 
 " Function to indicate if the buffer is modified
 function! LightlineModified() abort
-    return &modified ? '●' : ''
+    if &buftype != 'terminal'
+        return &modified ? '●' : ''
+    else 
+        return ''
+    endif
 endfunction
 
 " Function to display the mode for Lightline
@@ -709,6 +718,9 @@ function! LightlineMode() abort
     let ftmap = {
                 \ 'nerdtree': '',
                 \ }
+    if &buftype == 'terminal'
+        return ''
+    endif   
     return get(ftmap, &filetype, lightline#mode())
 endfunction
 
@@ -723,11 +735,15 @@ endfunction
 
 " Function to display file type for Lightline
 function! LightlineFiletype() abort
-    if &filetype == 'nerdtree'
+    if &filetype == 'nerdtree' || &buftype == 'terminal'
         return ''
-    endif   
-    let l:icon = WebDevIconsGetFileTypeSymbol()
-    return winwidth(0) > 76 ? (strlen(&filetype) ? &filetype . ' ' . l:icon : l:icon) : ''
+    endif
+    try
+        let l:icon = WebDevIconsGetFileTypeSymbol()
+        return winwidth(0) > 76 ? (strlen(&filetype) ? &filetype . ' ' . l:icon : l:icon) : ''
+        silent echom "WebDevIconsGetFileTypeSymbol(): Error retrieving file type icon"
+        return &filetype
+    endtry
 endfunction
 
 " Function to update the Lightline status line
@@ -735,72 +751,102 @@ function! UpdateLightline() abort
     call lightline#update()
 endfunction
 
-" Function to get the current git branch
+" Function to get the current git branch with error handling
 function! GetCurrentGitBranch() abort
-    let head = FugitiveHead()
-    if head != ''
-        let head = " \uf126 " . head 
-    endif
-    return head
+    try
+        let head = FugitiveHead()
+        if head != ''
+            let head = " \uf126 " . head
+        endif
+        return head
+        silent echom "FugitiveHead(): Error getting git branch"
+        return ''
+    endtry
 endfunction
 
-function! IsGitRepo()
-    let l:current_dir = expand('%:p:h')
-    return !empty(systemlist('git -C ' . l:current_dir . ' rev-parse --is-inside-work-tree 2>/dev/null'))
+function! IsGitRepo() abort
+    try
+        let l:current_dir = expand('%:p:h')
+        let is_repo = !empty(systemlist('git -C ' . l:current_dir . ' rev-parse --is-inside-work-tree 2>/dev/null'))
+        if !is_repo
+            silent echom "IsGitRepo(): Not a git repository"
+        endif
+        return is_repo
+    catch
+        silent echom "IsGitRepo(): Error checking git repository status"
+        return 0
+    endtry
 endfunction
-
 
 " Function to get current file changes
 function! GetCurrentGitChanges() abort
-    if g:git_branch != '' && &filetype != 'nerdtree'
-        let [a,m,r] = GitGutterGetHunkSummary()
-        return printf('[+%d ~%d -%d]', a, m, r)
+    if g:git_branch != '' && &filetype != 'nerdtree' && &buftype != 'terminal'
+        try
+            let [a, m, r] = GitGutterGetHunkSummary()
+            return printf('[+%d ~%d -%d]', a, m, r)
+        catch
+            silent echom "GetCurrentGitBranch(): Error retrieving git changes"
+            return ''
+        endtry
     else
-        return ''    
+        return ''
     endif
 endfunction
 
 " Function to update git information
 function! UpdateGitInfo() abort
-    if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile'
+    if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile' || &buftype ==# 'terminal'
         let g:git_branch = ''
         let g:git_files_changed = 0
     elseif executable('git')
-        let g:git_files_changed = GetGitFilesChanged()       
-        let g:git_branch = GetCurrentGitBranch()
+        try
+            let g:git_branch = GetCurrentGitBranch()
+            let g:git_files_changed = GetGitFilesChanged()
+        catch
+            silent echom "UpdateGitInfo(): Error updating git information"
+        endtry
     else
         let g:git_branch = ''
         let g:git_files_changed = 0
     endif
 endfunction
 
-" Function to get the number of files changed but not commited to git
+" Function to get the number of files changed but not committed to git with error handling
 function! GetGitFilesChanged() abort
-    let changes = len(filter(systemlist('git -C ' . expand('%:p:h') . ' status --porcelain 2>/dev/null'), 'v:val !=# ""'))
-    return changes
+    try
+        let changes = len(filter(systemlist('git -C ' . expand('%:p:h') . ' status --porcelain 2>/dev/null'), 'v:val !=# ""'))
+        return changes
+    catch
+        silent echom "GetGitFilesChanged(): Error getting git changes"
+        return 0
+    endtry
 endfunction
 
 " Function to display git information in Lightline
 function! LightlineGitInfo() abort
-    if &filetype == 'nerdtree'
+    if &filetype == 'nerdtree' || &buftype == 'terminal'
         return ''
     else
     return (g:git_files_changed > 0 ? '+' . g:git_files_changed : '') . g:git_branch
     endif
 endfunction
 
+" Check if the initial buffer is in a git repository
 if IsGitRepo()
-  " Autocommand to update git info when a buffer is entered
-  autocmd BufEnter * silent! call UpdateGitInfo()
-
-  " Autocommand to update  git when tab is entered
-  autocmd TabEnter * silent! call UpdateGitInfo()
-
-  " Update git info when text changes in Normal mode
-  autocmd BufWritePost * call UpdateGitInfo()
+    augroup GitIntegration
+        autocmd!
+        " Update git info when entering a buffer or tab
+        autocmd BufEnter * call UpdateGitInfo()
+        autocmd TabEnter * call UpdateGitInfo()
+        " Update git info when writing to a buffer
+        autocmd BufWritePost * call UpdateGitInfo()
+    augroup END
 endif
 
-" Autocommand to update the Lightline status line when CoC diagnostics change
-autocmd User CocDiagnosticChange call UpdateLightline()
+augroup CocDiagnostic
+    autocmd!
+    " Update the Lightline status line when CoC diagnostics change
+    autocmd User CocDiagnosticChange call UpdateLightline()
+augroup END
 
 " }}}
