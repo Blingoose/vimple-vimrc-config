@@ -647,50 +647,50 @@ let g:lightline = {
 \   }
 \}
 
-" Function to get CoC diagnostic errors
+" Helper function to get diagnostic count with icon
+function! s:GetDiagCountWithIcon(type, icon)
+    let l:info = get(b:, 'coc_diagnostic_info', {})
+    return has_key(l:info, a:type) && l:info[a:type] > 0 ? a:icon . ' ' . l:info[a:type] : ''
+endfunction
+
+" Refactored functions using helper
 function! LightlineDiagnosticError() abort
-    let l:info = get(b:, 'coc_diagnostic_info', {})
-    return has_key(l:info, 'error') && l:info['error'] > 0 ? ' ' . l:info['error'] : ''
+    return s:GetDiagCountWithIcon('error', '')
 endfunction
 
-" Function to get CoC diagnostic warnings
 function! LightlineDiagnosticWarning() abort
-    let l:info = get(b:, 'coc_diagnostic_info', {})
-    return has_key(l:info, 'warning') && l:info['warning'] > 0 ? ' ' . l:info['warning'] : ''
+    return s:GetDiagCountWithIcon('warning', '')
 endfunction
 
-" Function to get CoC diagnostic information
 function! LightlineDiagnosticInfo() abort
-    let l:info = get(b:, 'coc_diagnostic_info', {})
-    return has_key(l:info, 'information') && l:info['information'] > 0 ? ' ' . l:info['information'] : ''
+    return s:GetDiagCountWithIcon('information', '')
 endfunction
 
-" Function to get CoC diagnostic hints
 function! LightlineDiagnosticHint() abort
-    let l:info = get(b:, 'coc_diagnostic_info', {})
-    return has_key(l:info, 'hint') && l:info['hint'] > 0 ? ' ' . l:info['hint'] : ''
+    return s:GetDiagCountWithIcon('hint', '')
 endfunction
 
 " Function for filename section in Lightline
 function! LightlineFilename()
     if &filetype == 'nerdtree'
         return 'NERDTree'
-   elseif &buftype == 'terminal'
+    elseif &buftype == 'terminal'
         return 'Terminal'
     endif
-    let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
-    return filename 
+    " Default filename display
+    return expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
 endfunction
 
 " Function to get line information for Lightline
 function! LightlineLineinfo() abort
-    if winwidth(0) < 76 || &filetype == 'nerdtree' || &filetype == 'gitcommit' || &buftype == 'terminal'
+    " Consolidate conditions where line information is not necessary
+    if &filetype == 'nerdtree' || &filetype == 'gitcommit' || &buftype == 'terminal' || winwidth(0) < 76
         return ''
     endif
+    " Display line information if conditions are met
     let l:current_line = line('.')
     let l:max_line = line('$')
-    let l:lineinfo = l:current_line . '/' . l:max_line
-    return l:lineinfo
+    return l:current_line . '/' . l:max_line
 endfunction
 
 " Function to display the percent component for Lightline
@@ -713,13 +713,12 @@ endfunction
 
 " Function to display the mode for Lightline
 function! LightlineMode() abort
-    let ftmap = {
-                \ 'nerdtree': '',
-                \ }
-    if &buftype == 'terminal'
-        return ''
-    endif   
-    return get(ftmap, &filetype, lightline#mode())
+    if &filetype == 'nerdtree'
+        return ''  " Icon for NERDTree
+    elseif &buftype == 'terminal'
+        return ''  " Icon for Terminal
+    endif
+    return lightline#mode()  " Default mode handling by Lightline
 endfunction
 
 " Function to display read-only status for Lightline
@@ -733,12 +732,26 @@ endfunction
 
 " Function to display file type for Lightline
 function! LightlineFiletype() abort
+    " Return an empty string for NERDTree or terminal buffers
     if &filetype == 'nerdtree' || &buftype == 'terminal'
         return ''
     endif
+
     try
         let l:icon = WebDevIconsGetFileTypeSymbol()
-        return winwidth(0) > 76 ? (strlen(&filetype) ? &filetype . ' ' . l:icon : l:icon) : ''
+        " Only append the icon if the window width is sufficient
+        if winwidth(0) > 76
+            " Check if filetype is non-empty and append the icon
+            if strlen(&filetype)
+                return &filetype . ' ' . l:icon
+            else
+                return l:icon
+            endif
+        else
+            return ''
+        endif
+    catch
+        " Handle any exceptions by logging and falling back to just filetype
         silent echom "WebDevIconsGetFileTypeSymbol(): Error retrieving file type icon"
         return &filetype
     endtry
@@ -754,23 +767,33 @@ function! GetCurrentGitBranch() abort
     try
         let head = FugitiveHead()
         if head != ''
-            let head = " \uf126 " . head
+            " Prepend the icon to the branch name
+            return " \uf126 " . head
+        else
+            " If head is empty, no branch found or error
+            silent echom "FugitiveHead(): Error getting git branch"
+            return ''
         endif
-        return head
+    catch
+        " Catch any errors from FugitiveHead() and log them
         silent echom "FugitiveHead(): Error getting git branch"
         return ''
     endtry
 endfunction
 
+" Function to check if the current directory is a git repository
 function! IsGitRepo() abort
     try
         let l:current_dir = expand('%:p:h')
-        let is_repo = !empty(systemlist('git -C ' . l:current_dir . ' rev-parse --is-inside-work-tree 2>/dev/null'))
-        if !is_repo
+        let is_repo = !empty(systemlist('git -C ' . l:current_dir . ' rev-parse --is-inside-work-tree 2>/dev/null')[0])
+        if is_repo
+            return 1
+        else
             silent echom "IsGitRepo(): Not a git repository"
+            return 0
         endif
-        return is_repo
     catch
+        " Catch any errors during the git command execution
         silent echom "IsGitRepo(): Error checking git repository status"
         return 0
     endtry
@@ -793,15 +816,30 @@ endfunction
 
 " Function to update git information
 function! UpdateGitInfo() abort
+    " Check if the current buffer type or file type should update git information
     if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile' || &buftype ==# 'terminal' || &filetype == 'gitcommit'
+        " Clear git related global variables since they are irrelevant in this buffer
         let g:git_branch = ''
         let g:git_files_changed = 0
-    elseif executable('git')
+        return
+    endif
+
+    " Check if 'git' is an executable in the path to avoid errors in environments without git
+    if executable('git')
         try
-            let g:git_branch = GetCurrentGitBranch()
-            let g:git_files_changed = GetGitFilesChanged()
+            " Use IsGitRepo() to check if the current directory is a git repository
+            if IsGitRepo()
+                let g:git_branch = GetCurrentGitBranch()
+                let g:git_files_changed = GetGitFilesChanged()
+            else
+                " Clear git information if the current directory is not a git repository
+                let g:git_branch = ''
+                let g:git_files_changed = 0
+            endif
         catch
             silent echom "UpdateGitInfo(): Error updating git information"
+            let g:git_branch = ''
+            let g:git_files_changed = 0
         endtry
     else
         let g:git_branch = ''
@@ -829,17 +867,14 @@ function! LightlineGitInfo() abort
     endif
 endfunction
 
-" Check if the initial buffer is in a git repository
-if IsGitRepo()
-    augroup GitIntegration
-        autocmd!
-        " Update git info when entering a buffer or tab
-        autocmd BufEnter * call UpdateGitInfo()
-        autocmd TabEnter * call UpdateGitInfo()
-        " Update git info when writing to a buffer
-        autocmd BufWritePost * call UpdateGitInfo()
-    augroup END
-endif
+augroup GitIntegration
+    autocmd!
+    " Update git info when entering a buffer or tab
+    autocmd BufEnter * call UpdateGitInfo()
+    autocmd TabEnter * call UpdateGitInfo()
+    " Update git info when writing to a buffer
+    autocmd BufWritePost * call UpdateGitInfo()
+augroup END
 
 augroup CocDiagnostic
     autocmd!
