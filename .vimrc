@@ -430,8 +430,6 @@ augroup FiletypeSettings
     autocmd FileType vim setlocal foldmethod=marker
     " If the current file type is HTML, set indentation to 2 spaces.
     autocmd Filetype html setlocal tabstop=2 shiftwidth=2 expandtab
-    " Autocommand to set filetype to terminal for terminal buffers
-    autocmd BufEnter term://* setlocal filetype=terminal
 augroup END
 
 augroup PythonFile
@@ -686,7 +684,7 @@ endfunction
 
 " Function to get line information for Lightline
 function! LightlineLineinfo() abort
-    if winwidth(0) < 76 || &filetype == 'nerdtree' || &buftype == 'terminal'
+    if winwidth(0) < 76 || &filetype == 'nerdtree' || &filetype == 'gitcommit' || &buftype == 'terminal'
         return ''
     endif
     let l:current_line = line('.')
@@ -697,7 +695,7 @@ endfunction
 
 " Function to display the percent component for Lightline
 function! LightlinePercent() abort
-    if &filetype != 'nerdtree' &&  &buftype != 'terminal'
+    if &filetype != 'nerdtree' && &filetype != 'gitcommit' &&  &buftype != 'terminal'
         return line('.') * 100 / line('$') . '%'
     else
         return ''
@@ -780,7 +778,7 @@ endfunction
 
 " Function to get current file changes
 function! GetCurrentGitChanges() abort
-    if g:git_branch != '' && &filetype != 'nerdtree' && &buftype != 'terminal'
+    if g:git_branch != '' && &filetype != 'nerdtree' && &buftype != 'terminal' && &filetype != 'gitcommit'
         try
             let [a, m, r] = GitGutterGetHunkSummary()
             return printf('[+%d ~%d -%d]', a, m, r)
@@ -795,7 +793,7 @@ endfunction
 
 " Function to update git information
 function! UpdateGitInfo() abort
-    if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile' || &buftype ==# 'terminal'
+    if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile' || &buftype ==# 'terminal' || &filetype == 'gitcommit'
         let g:git_branch = ''
         let g:git_files_changed = 0
     elseif executable('git')
@@ -824,7 +822,7 @@ endfunction
 
 " Function to display git information in Lightline
 function! LightlineGitInfo() abort
-    if &filetype == 'nerdtree' || &buftype == 'terminal'
+    if &filetype == 'nerdtree' || &buftype == 'terminal'|| &filetype == 'gitcommit'
         return ''
     else
     return (g:git_files_changed > 0 ? '+' . g:git_files_changed : '') . g:git_branch
