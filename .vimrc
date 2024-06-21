@@ -816,7 +816,7 @@ endfunction
 
 " Function to update git information
 function! UpdateGitInfo() abort
-    " Check if the current buffer type or file type should update git information
+    " Don't update anything for these buftypes and filetypes
     if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile' || &buftype ==# 'terminal' || &filetype == 'gitcommit'
         " Clear git related global variables since they are irrelevant in this buffer
         let g:git_branch = ''
