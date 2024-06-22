@@ -381,32 +381,24 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
 " Custom Addition
+
 " Function to toggle the diagnostic float window
 function! ToggleDiagnosticFloat() abort
-  " Initialize g:diagnostic_float_open if it's not defined
-  if !exists('g:diagnostic_float_open')
-    let g:diagnostic_float_open = 0
-  endif
+    " Use `get()` to safely access g:diagnostic_float_open with a default value
+    let l:is_open = get(g:, 'diagnostic_float_open', 0)
 
-  " Toggle the diagnostic float window based on the current state with error handling
-  try
-    if g:diagnostic_float_open
-      call coc#float#close_all()
-      let g:diagnostic_float_open = 0
+    if l:is_open
+        call coc#float#close_all()
     else
-      call CocActionAsync('diagnosticInfo')
-      let g:diagnostic_float_open = 1
+        call CocActionAsync('diagnosticInfo')
     endif
-  catch
-    " Handle exceptions by logging or silently ignoring them
-    echohl ErrorMsg | echom "Failed to toggle diagnostic float window: " . v:exception | echohl None
-    " Optionally reset the flag if an error occurs during opening
-    let g:diagnostic_float_open = 0
-  endtry
+
+    " Toggle the state
+    let g:diagnostic_float_open = !l:is_open
 endfunction
 
-" Map <leader><leader> to toggle the diagnostic float window
-nnoremap <silent> <leader><leader> :call ToggleDiagnosticFloat()<CR>
+" Map to toggle the diagnostic float window
+nnoremap <silent> <leader>d :call ToggleDiagnosticFloat()<CR>
 
 " }}}
 
@@ -668,19 +660,19 @@ endfunction
 
 " Refactored functions using helper
 function! LightlineDiagnosticError() abort
-    return s:GetDiagCountWithIcon('error', '')
+    return s:GetDiagCountWithIcon('error', '')
 endfunction
 
 function! LightlineDiagnosticWarning() abort
-    return s:GetDiagCountWithIcon('warning', '')
+    return s:GetDiagCountWithIcon('warning', '')
 endfunction
 
 function! LightlineDiagnosticInfo() abort
-    return s:GetDiagCountWithIcon('information', '')
+    return s:GetDiagCountWithIcon('information', '')
 endfunction
 
 function! LightlineDiagnosticHint() abort
-    return s:GetDiagCountWithIcon('hint', '')
+    return s:GetDiagCountWithIcon('hint', '')
 endfunction
 
 " Function for filename section in Lightline
@@ -690,84 +682,57 @@ function! LightlineFilename()
     elseif &buftype == 'terminal'
         return 'Terminal'
     endif
-    " Default filename display
     return expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
 endfunction
 
 " Function to get line information for Lightline
 function! LightlineLineinfo() abort
-    " Consolidate conditions where line information is not necessary
-    if &filetype == 'nerdtree' || &filetype == 'gitcommit' || &buftype == 'terminal' || winwidth(0) < 76
+    if index(['nerdtree', 'gitcommit'], &filetype) != -1 || &buftype == 'terminal' || winwidth(0) < 76
         return ''
     endif
-    " Display line information if conditions are met
-    let l:current_line = line('.')
-    let l:max_line = line('$')
-    return l:current_line . '/' . l:max_line
+    return line('.') . '/' . line('$')
 endfunction
 
 " Function to display the percent component for Lightline
 function! LightlinePercent() abort
-    if &filetype != 'nerdtree' && &filetype != 'gitcommit' &&  &buftype != 'terminal'
+    if index(['nerdtree', 'gitcommit'], &filetype) == -1 && &buftype != 'terminal'
         return line('.') * 100 / line('$') . '%'
-    else
-        return ''
     endif
+    return ''
 endfunction
 
 " Function to indicate if the buffer is modified
 function! LightlineModified() abort
-    if &buftype != 'terminal'
-        return &modified ? '●' : ''
-    else 
-        return ''
-    endif
+    return &buftype != 'terminal' && &modified ? '●' : ''
 endfunction
 
 " Function to display the mode for Lightline
 function! LightlineMode() abort
     if &filetype == 'nerdtree'
-        return ''  " Icon for NERDTree
+        return ''
     elseif &buftype == 'terminal'
-        return ''  " Icon for Terminal
+        return ''
     endif
-    return lightline#mode()  " Default mode handling by Lightline
+    return lightline#mode()
 endfunction
 
 " Function to display read-only status for Lightline
 function! LightlineReadonly() abort
-    let ftmap = {
-                \ 'nerdtree': '',
-                \ }
-    let l:char = get(ftmap, &filetype, '')
-    return &readonly ? l:char : ''
+    return &readonly ? get({'nerdtree': ''}, &filetype, '') : ''
 endfunction
 
 " Function to display file type for Lightline
 function! LightlineFiletype() abort
-    " Return an empty string for NERDTree or terminal buffers
-    if &filetype == 'nerdtree' || &buftype == 'terminal'
+    if index(['nerdtree'], &filetype) != -1 || &buftype == 'terminal'
         return ''
     endif
 
-    try
-        let l:icon = WebDevIconsGetFileTypeSymbol()
-        " Only append the icon if the window width is sufficient
-        if winwidth(0) > 76
-            " Check if filetype is non-empty and append the icon
-            if strlen(&filetype)
-                return &filetype . ' ' . l:icon
-            else
-                return l:icon
-            endif
-        else
-            return ''
-        endif
-    catch
-        " Handle any exceptions by logging and falling back to just filetype
-        silent echom "WebDevIconsGetFileTypeSymbol(): Error retrieving file type icon"
+    if !exists('*WebDevIconsGetFileTypeSymbol')
         return &filetype
-    endtry
+    endif
+
+    let l:icon = WebDevIconsGetFileTypeSymbol()
+    return winwidth(0) > 76 ? (&filetype . ' ' . l:icon) : l:icon
 endfunction
 
 " Function to update the Lightline status line
@@ -775,60 +740,26 @@ function! UpdateLightline() abort
     call lightline#update()
 endfunction
 
-" Function to get the current git branch with error handling
+" Function to get the current git branch
 function! GetCurrentGitBranch() abort
-    try
-        let head = FugitiveHead()
-        if head != ''
-            " Prepend the icon to the branch name
-            return " \uf126 " . head
-        else
-            return ''
-        endif
-    catch
-        " Catch any errors from FugitiveHead() and log them
-        silent echom "FugitiveHead(): Error getting git branch"
-        return ''
-    endtry
+    let l:head = FugitiveHead()
+    return empty(l:head) ? '' : " \uf126 " . l:head
 endfunction
 
 " Function to check if the current directory is a git repository
 function! IsGitRepo() abort
-    try
-        let l:current_dir = expand('%:p:h')
-        let is_repo = !empty(systemlist('git -C ' . l:current_dir . ' rev-parse --is-inside-work-tree 2>/dev/null')[0])
-        if is_repo
-            return 1
-        else
-            silent echom "IsGitRepo(): Not a git repository"
-            return 0
-        endif
-    catch
-        " Catch any errors during the git command execution
-        silent echom "IsGitRepo(): Error checking git repository status"
-        return 0
-    endtry
+    let l:current_dir = expand('%:p:h')
+    let l:git_check = systemlist('git -C ' . l:current_dir . ' rev-parse --is-inside-work-tree 2>/dev/null')
+    return !empty(l:git_check) && l:git_check[0] ==# 'true'
 endfunction
 
 function! GetCurrentGitChanges() abort
-    if &filetype =~ '^\(nerdtree\|gitcommit\)$' || &buftype == 'terminal'
+    if index(['nerdtree', 'gitcommit'], &filetype) != -1 || &buftype == 'terminal' || empty(g:git_branch)
         return ''
     endif
-    if empty(g:git_branch)
-        return ''
-    endif
-    try
-        " Fetch changes and check if they are not empty
-        let [a, m, r] = GitGutterGetHunkSummary()
-        if a + m + r > 0
-            return printf('[+%d ~%d -%d]', a, m, r)
-        else
-            return ''
-        endif
-    catch
-        silent echom "GetCurrentGitChanges(): Error checking git status: " . v:exception
-    endtry
-    return ''
+    
+    let [a, m, r] = GitGutterGetHunkSummary()
+    return a + m + r > 0 ? printf('[+%d ~%d -%d]', a, m, r) : ''
 endfunction
 
 function! ClearGitStatus()
@@ -839,64 +770,44 @@ endfunction
 
 " Function to update git information
 function! UpdateGitInfo() abort
-    " Skip update for irrelevant buffers
-    if &buftype =~ '^\(help\|quickfix\|nofile\|terminal\)$' || &filetype == 'gitcommit'
+    if index(['help', 'quickfix', 'nofile', 'terminal'], &buftype) != -1 || &filetype == 'gitcommit'
         call ClearGitStatus()
         return
     endif
 
-    " Update only if git is usable and in a repo context
     if executable('git') && IsGitRepo()
-        try
-            let new_branch = GetCurrentGitBranch()
-            let new_changes = GetGitFilesChanged()
-            " Update only on changes
-            if new_branch != g:git_branch || new_changes != g:git_files_changed
-                let g:git_branch = new_branch
-                let g:git_files_changed = new_changes
-                call lightline#update()
-            endif
-        catch
-            silent echom "UpdateGitInfo(): Error updating git information: " . v:exception
-            call ClearGitStatus()
-        endtry
+        let new_branch = GetCurrentGitBranch()
+        let new_changes = GetGitFilesChanged()
+        if new_branch != g:git_branch || new_changes != g:git_files_changed
+            let g:git_branch = new_branch
+            let g:git_files_changed = new_changes
+            call lightline#update()
+        endif
     else
         call ClearGitStatus()
     endif
 endfunction
 
-" Function to get the number of files changed but not committed to git with error handling
+" Function to get the number of files changed but not committed to git
 function! GetGitFilesChanged() abort
-    try
-        let changes = len(filter(systemlist('git -C ' . expand('%:p:h') . ' status --porcelain 2>/dev/null'), 'v:val !=# ""'))
-        return changes
-    catch
-        silent echom "GetGitFilesChanged(): Error getting git changes"
-        return 0
-    endtry
+    return len(filter(systemlist('git -C ' . expand('%:p:h') . ' status --porcelain 2>/dev/null'), 'v:val !=# ""'))
 endfunction
 
 " Function to display git information in Lightline
 function! LightlineGitInfo() abort
-    if &filetype == 'nerdtree' || &buftype == 'terminal'|| &filetype == 'gitcommit'
+    if index(['nerdtree', 'gitcommit'], &filetype) != -1 || &buftype == 'terminal'
         return ''
-    else
-    return (g:git_files_changed > 0 ? '+' . g:git_files_changed : '') . g:git_branch
     endif
+    return (g:git_files_changed > 0 ? '+' . g:git_files_changed : '') . g:git_branch
 endfunction
 
 augroup GitIntegration
     autocmd!
-    " Update git info when entering a buffer or tab
-    autocmd BufEnter * call UpdateGitInfo()
-    autocmd TabEnter * call UpdateGitInfo()
-    " Update git info when writing to a buffer
-    autocmd BufWritePost * call UpdateGitInfo()
+    autocmd BufEnter,TabEnter,BufWritePost * call UpdateGitInfo()
 augroup END
 
 augroup CocDiagnostic
     autocmd!
-    " Update the Lightline status line when CoC diagnostics change
     autocmd User CocDiagnosticChange call UpdateLightline()
 augroup END
 
