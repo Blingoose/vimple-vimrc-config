@@ -783,8 +783,6 @@ function! GetCurrentGitBranch() abort
             " Prepend the icon to the branch name
             return " \uf126 " . head
         else
-            " If head is empty, no branch found or error
-            silent echom "FugitiveHead(): Error getting git branch"
             return ''
         endif
     catch
@@ -833,43 +831,37 @@ function! GetCurrentGitChanges() abort
     return ''
 endfunction
 
+function! ClearGitStatus()
+    let g:git_branch = ''
+    let g:git_files_changed = 0
+    call lightline#update()
+endfunction
+
 " Function to update git information
 function! UpdateGitInfo() abort
-    " Check if the current buffer type or file type should update git information
-    if &buftype ==# 'help' || &buftype ==# 'quickfix' || &buftype ==# 'nofile' || &buftype ==# 'terminal' || &filetype == 'gitcommit'
-        " Clear git related global variables since they are irrelevant in this buffer
-        let g:git_branch = ''
-        let g:git_files_changed = 0
-        call lightline#update()
+    " Skip update for irrelevant buffers
+    if &buftype =~ '^\(help\|quickfix\|nofile\|terminal\)$' || &filetype == 'gitcommit'
+        call ClearGitStatus()
         return
     endif
 
-    " Ensure git information is updated only if git is executable and the directory is a git repository
+    " Update only if git is usable and in a repo context
     if executable('git') && IsGitRepo()
         try
-            " Fetch new git information
             let new_branch = GetCurrentGitBranch()
             let new_changes = GetGitFilesChanged()
-
-            " Update global variables and refresh Lightline only if there are changes
+            " Update only on changes
             if new_branch != g:git_branch || new_changes != g:git_files_changed
                 let g:git_branch = new_branch
                 let g:git_files_changed = new_changes
+                call lightline#update()
             endif
         catch
-            " Handle errors by logging and reverting to a known good state if necessary
             silent echom "UpdateGitInfo(): Error updating git information: " . v:exception
-            if g:git_branch != '' || g:git_files_changed != 0
-                let g:git_branch = ''
-                let g:git_files_changed = 0
-            endif
+            call ClearGitStatus()
         endtry
     else
-        " Clear git information if not a git repository or git not executable
-        if g:git_branch != '' || g:git_files_changed != 0
-            let g:git_branch = ''
-            let g:git_files_changed = 0
-        endif
+        call ClearGitStatus()
     endif
 endfunction
 
