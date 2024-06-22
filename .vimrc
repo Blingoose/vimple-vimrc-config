@@ -658,7 +658,7 @@ function! s:GetDiagCountWithIcon(type, icon)
     return has_key(l:info, a:type) && l:info[a:type] > 0 ? a:icon . ' ' . l:info[a:type] : ''
 endfunction
 
-" Refactored functions using helper
+" Diagnostic function types
 function! LightlineDiagnosticError() abort
     return s:GetDiagCountWithIcon('error', '')
 endfunction
@@ -735,11 +735,6 @@ function! LightlineFiletype() abort
     return winwidth(0) > 76 ? (&filetype . ' ' . l:icon) : l:icon
 endfunction
 
-" Function to update the Lightline status line
-function! UpdateLightline() abort
-    call lightline#update()
-endfunction
-
 " Function to get the current git branch
 function! GetCurrentGitBranch() abort
     let l:head = FugitiveHead()
@@ -808,7 +803,7 @@ augroup END
 
 augroup CocDiagnostic
     autocmd!
-    autocmd User CocDiagnosticChange call UpdateLightline()
+    autocmd User CocDiagnosticChange call lightline#update()
 augroup END
 
 " }}}
