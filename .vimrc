@@ -812,28 +812,24 @@ function! IsGitRepo() abort
     endtry
 endfunction
 
-" Function to get current file changes
 function! GetCurrentGitChanges() abort
-    " Only execute in relevant contexts
     if &filetype =~ '^\(nerdtree\|gitcommit\)$' || &buftype == 'terminal'
         return ''
     endif
-
-    " Check if we're in a git managed repository and if there's an active branch
     if empty(g:git_branch)
         return ''
     endif
-
-    " Safely try to fetch git hunk information
     try
+        " Fetch changes and check if they are not empty
         let [a, m, r] = GitGutterGetHunkSummary()
         if a + m + r > 0
             return printf('[+%d ~%d -%d]', a, m, r)
+        else
+            return ''
         endif
     catch
-        echom "Error retrieving git changes: " . v:exception
+        silent echom "GetCurrentGitChanges(): Error checking git status: " . v:exception
     endtry
-
     return ''
 endfunction
 
@@ -844,29 +840,36 @@ function! UpdateGitInfo() abort
         " Clear git related global variables since they are irrelevant in this buffer
         let g:git_branch = ''
         let g:git_files_changed = 0
+        call lightline#update()
         return
     endif
 
-    " Check if 'git' is an executable in the path to avoid errors in environments without git
-    if executable('git')
+    " Ensure git information is updated only if git is executable and the directory is a git repository
+    if executable('git') && IsGitRepo()
         try
-            " Use IsGitRepo() to check if the current directory is a git repository
-            if IsGitRepo()
-                let g:git_branch = GetCurrentGitBranch()
-                let g:git_files_changed = GetGitFilesChanged()
-            else
-                " Clear git information if the current directory is not a git repository
+            " Fetch new git information
+            let new_branch = GetCurrentGitBranch()
+            let new_changes = GetGitFilesChanged()
+
+            " Update global variables and refresh Lightline only if there are changes
+            if new_branch != g:git_branch || new_changes != g:git_files_changed
+                let g:git_branch = new_branch
+                let g:git_files_changed = new_changes
+            endif
+        catch
+            " Handle errors by logging and reverting to a known good state if necessary
+            silent echom "UpdateGitInfo(): Error updating git information: " . v:exception
+            if g:git_branch != '' || g:git_files_changed != 0
                 let g:git_branch = ''
                 let g:git_files_changed = 0
             endif
-        catch
-            silent echom "UpdateGitInfo(): Error updating git information"
-            let g:git_branch = ''
-            let g:git_files_changed = 0
         endtry
     else
-        let g:git_branch = ''
-        let g:git_files_changed = 0
+        " Clear git information if not a git repository or git not executable
+        if g:git_branch != '' || g:git_files_changed != 0
+            let g:git_branch = ''
+            let g:git_files_changed = 0
+        endif
     endif
 endfunction
 
