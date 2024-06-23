@@ -660,19 +660,19 @@ endfunction
 
 " Diagnostic function types
 function! LightlineDiagnosticError() abort
-    return s:GetDiagCountWithIcon('error', '')
+    return s:GetDiagCountWithIcon('error', '')
 endfunction
 
 function! LightlineDiagnosticWarning() abort
-    return s:GetDiagCountWithIcon('warning', '')
+    return s:GetDiagCountWithIcon('warning', '')
 endfunction
 
 function! LightlineDiagnosticInfo() abort
-    return s:GetDiagCountWithIcon('information', '')
+    return s:GetDiagCountWithIcon('information', '')
 endfunction
 
 function! LightlineDiagnosticHint() abort
-    return s:GetDiagCountWithIcon('hint', '')
+    return s:GetDiagCountWithIcon('hint', '')
 endfunction
 
 " Function for filename section in Lightline
@@ -709,16 +709,16 @@ endfunction
 " Function to display the mode for Lightline
 function! LightlineMode() abort
     if &filetype == 'nerdtree'
-        return ''
+        return ''
     elseif &buftype == 'terminal'
-        return ''
+        return ''
     endif
     return lightline#mode()
 endfunction
 
 " Function to display read-only status for Lightline
 function! LightlineReadonly() abort
-    return &readonly ? get({'nerdtree': ''}, &filetype, '') : ''
+    return &readonly ? get({'nerdtree': ''}, &filetype, '') : ''
 endfunction
 
 " Function to display file type for Lightline
