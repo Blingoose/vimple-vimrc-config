@@ -113,7 +113,7 @@ Below is a list of all key bindings and their actions from the `.vimrc`:
 - `<space>j`: Do default action for the next item
 - `<space>k`: Do default action for the previous item
 - `<space>p`: Resume latest coc list
-- `<leader><leader>`: Toggle diagnostic float window
+- `<leader>d`: Toggle diagnostic float window
 - `<TAB>`: Scroll forward through completions
 - `<S-TAB>`: Scroll backward through completions
 - `<Esc>[1;5I`: Toggle completion menu (Note for user: change mappings to something like `<c-space>` instead of `<Esc>[1;5I` in .vimrc)
