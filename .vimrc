@@ -437,6 +437,14 @@ augroup FiletypeSettings
     autocmd Filetype html setlocal tabstop=2 shiftwidth=2 expandtab
 augroup END
 
+" sets up an autocommand group that ensures filetype is detected 
+" and that other necessary autocommands are triggered
+augroup FileTypeAutodetect
+    autocmd!
+    autocmd BufFilePost * filetype detect
+    autocmd BufFilePost * silent! doautocmd BufReadPost
+augroup END
+
 augroup PythonFile
     autocmd!
     " Remove trailing whitespace from Python files on save.
@@ -463,6 +471,15 @@ augroup NERDTreeCursorLine
     autocmd BufEnter * if &filetype == 'nerdtree' | setlocal cursorline | endif
     " If filetype is not NERDTree hide cursorline
     autocmd BufLeave * if &filetype == 'nerdtree' | setlocal nocursorline | endif
+augroup END
+
+" Refresh neerdtree when a newly file created and saved
+augroup NERDTreeAutoRefresh
+    autocmd!
+    " Refresh NERDTree upon saving a file, if NERDTree is open
+    autocmd BufWritePost * if exists("g:NERDTree") && g:NERDTree.IsOpen() | NERDTreeRefresh | endif
+    " Ensure NERDTree is refreshed when opened
+    autocmd VimEnter,BufWinEnter * if exists("g:NERDTree") && g:NERDTree.IsOpen() | NERDTreeRefresh | endif
 augroup END
 
 " Exit Vim/Close Tab when NERDTree is the last window left
