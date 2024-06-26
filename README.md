@@ -25,33 +25,36 @@ Welcome to my Vim setup, where Vim and Simple combine to create Vimple—a strai
    - [Download Meslo nerd font](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#meslo-nerd-font-patched-for-powerlevel10k)
    - set your terminal to use newly installed meslo font.
 10. Enjoy and keep it simple.
-  
+
 ## Using Coc for Completion
 
 The provided `coc-settings.json` is configured mainly for Python and web development.
 
 ### Prerequisites
 
-1) To match the formatting and linting settings in the configuration, you will need to install the following Python packages:
+1. To match the formatting and linting settings in the configuration, you will need to install the following Python packages:
 
 - **Black** (formatter): `pip install black`
 - **Flake8** (linter): `pip install flake8`
 
-2) Place the `coc-settings.json` in your `~/.vim` directory.
+2. Place the `coc-settings.json` in your `~/.vim` directory.
 
-3) I have provided a customized 'solarized.vim' file in [custom_color scheme_lightline/solarized.vim](https://raw.githubusercontent.com/Blingoose/vimple_vimrc_config/main/custom_color%20scheme_lightline/solarized.vim)
-Copy this provided colorscheme instead of the original 'solarized.vim' which can be found at:
-/Users/{userAccountName}/.vim/plugged/lightline.vim/autoload/lightline/colorscheme
+3. I have provided a customized 'solarized.vim' file in [custom_color scheme_lightline/solarized.vim](https://raw.githubusercontent.com/Blingoose/vimple_vimrc_config/main/custom_color%20scheme_lightline/solarized.vim)
+   Copy this provided colorscheme instead of the original 'solarized.vim' which can be found at:
+   /Users/{userAccountName}/.vim/plugged/lightline.vim/autoload/lightline/colorscheme
 
 ### Installation of CoC Extensions
 
 Inside Vim, enter the following command to install necessary CoC extensions:
+
 ```
-:CocInstall coc-json coc-vimlsp coc-pyright coc-tsserver coc-eslint coc-prettier coc-html coc-css coc-markdownlint coc-yaml coc-highlight 
+:CocInstall coc-json coc-vimlsp coc-pyright coc-tsserver coc-eslint coc-prettier coc-html coc-css coc-markdownlint coc-yaml coc-highlight
 ```
+
 For more information, visit the [Coc.nvim GitHub repository](https://github.com/neoclide/coc.nvim).
 
 To edit `coc-settings.json` within Vim, use:
+
 ```
 :CocConfig
 ```
@@ -65,7 +68,8 @@ Below is a list of all key bindings and their actions from the `.vimrc`:
 - `zo`: Fold open.
 - `zm`: Fold close.
 
-### Editor 
+### Editor
+
 - `,`: Leader key
 - `\\`: Jump back to the last cursor position
 - `<leader>h`: Turn off search highlighting
@@ -117,20 +121,25 @@ Below is a list of all key bindings and their actions from the `.vimrc`:
 - `<TAB>`: Scroll forward through completions
 - `<S-TAB>`: Scroll backward through completions
 - `<Esc>[1;5I`: Toggle completion menu (Note for user: change mappings to something like `<c-space>` instead of `<Esc>[1;5I` in .vimrc)
+- `<leader>sc`: Toggle color highlight On/OFF (show color)
+- `<leader>cc`: Change color when cursor is on a highlighted color. Color highlight must be ON.
 
 ### Special Note on Keybinding Customization
 
-1) The default behavior for toggling CoC completion is typically `<c-space>`, which may not work well on macOS. It is recommended to customize this mapping to fit your terminal and preferences. In my case I configured it to use `<Esc>[1;5I` (it's Ctrl+ Tab for me), but
-`<c-space>` is the default behavior. Any other mapping is encouraged, such as using `<leader>df`.
+1. The default behavior for toggling CoC completion is typically `<c-space>`, which may not work well on macOS. It is recommended to customize this mapping to fit your terminal and preferences. In my case I configured it to use `<Esc>[1;5I` (it's Ctrl+ Tab for me), but
+   `<c-space>` is the default behavior. Any other mapping is encouraged, such as using `<leader>df`.
 
 Here's an example of a custom mapping that can be adapted:
+
 ```vim
 inoremap <silent><expr> <c-space> coc#pum#visible() ? coc#pum#stop() : coc#refresh()
 ```
+
 This is something you might want to tweak to ensure optimal performance with your specific terminal setup.
 
-2) The mapping `nnoremap ± :NERDTreeToggle<CR>` is a very personal setting of the creator and might not be suitable for everyone. It is encouraged to change this mapping to something that fits your preference better.
-Here's an example of a custom mapping that can be adapted:
+2. The mapping `nnoremap ± :NERDTreeToggle<CR>` is a very personal setting of the creator and might not be suitable for everyone. It is encouraged to change this mapping to something that fits your preference better.
+   Here's an example of a custom mapping that can be adapted:
+
 ```vim
 nnoremap <leader>e :NERDTreeToggle<CR>
 ```
@@ -138,7 +147,3 @@ nnoremap <leader>e :NERDTreeToggle<CR>
 <img width="868" alt="Screenshot 2024-06-16 at 0 57 21" src="https://github.com/Blingoose/vimple_vimrc_config/assets/108837766/5039e015-45f7-4a1f-88fb-e2dc6bae5593">
 
 <img width="1101" alt="Screenshot 2024-06-16 at 1 03 48" src="https://github.com/Blingoose/vimple_vimrc_config/assets/108837766/16351b69-27d1-4a0e-b685-7a86ab53679d">
-
-
-
-

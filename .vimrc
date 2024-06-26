@@ -238,6 +238,19 @@ nnoremap <leader>bp :bprevious<CR>
 " Exit to terminal Normal-mode.
 tnoremap <leader>n <C-\><C-n>
 
+" Toggle show color highlight
+nnoremap <silent> <leader>sc :CocCommand document.toggleColors<CR>
+
+" Function to pick a color and handle exit
+function! ChangeColor() abort
+    " Call the CocAction to pick a color
+    call CocAction('pickColor')
+    " Ensure the color picker buffer is closed and terminal is reset
+    silent! :redraw!
+endfunction
+" Map the leader key sequence to the custom function
+nnoremap <leader>cc :call ChangeColor()<CR>
+
 " NERDTree specific mappings.
 " Map the ± key to toggle NERDTree open and close.
 nnoremap <silent> ± :NERDTreeToggle<CR>

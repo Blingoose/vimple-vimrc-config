@@ -54,5 +54,5 @@
   "diagnostic.virtualTextCurrentLineOnly": false,
 
   // coc highlight
-  "highlight.colors.enable": true
+  "colors.enable": true
 }
