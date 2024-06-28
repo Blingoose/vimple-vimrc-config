@@ -149,6 +149,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-fugitive'
   Plug 'philrunninger/nerdtree-visual-selection'
   Plug 'airblade/vim-gitgutter'
+  Plug 'mattn/emmet-vim'
+  Plug 'honza/vim-snippets'
 call plug#end()
 
 " }}}
@@ -415,6 +417,25 @@ nnoremap <silent> <leader>d :call ToggleDiagnosticFloat()<CR>
 
 " }}}
 
+" COC SNIPPETS ---------------------------------------------------------------- {{{
+
+" Use <C-l> for trigger snippet expand.
+imap <C-l> <Plug>(coc-snippets-expand)
+
+" Use <C-j> for both expand and jump (make expand higher priority.)
+imap <C-§> <Plug>(coc-snippets-expand-jump)
+
+" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+let g:coc_snippet_next = '<c-j>'
+
+" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+let g:coc_snippet_prev = '<c-k>'
+
+" Use <leader>x for convert visual selected code to snippet
+xmap <leader>x  <Plug>(coc-convert-snippet)
+
+" }}}
+
 " GENERAL VIM SCRIPT ---------------------------------------------------------------- {{{
 
 " Inspect $TERM instead of hardcoding t_Co=256.
@@ -442,11 +463,12 @@ function! ResizeWindows()
 endfunction
 autocmd VimResized * call ResizeWindows()
 
+" Filetype-specific settings
 augroup FiletypeSettings
     autocmd!
-    " Enable the marker method of folding.
+    " Enable marker-based folding for Vim script files
     autocmd FileType vim setlocal foldmethod=marker
-    " If the current file type is HTML, set indentation to 2 spaces.
+    " Set indentation to 2 spaces for HTML files
     autocmd Filetype html setlocal tabstop=2 shiftwidth=2 expandtab
 augroup END
 

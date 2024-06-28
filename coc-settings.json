@@ -1,17 +1,26 @@
 {
-  //format on save
+  // format on save
   "coc.preferences.formatOnSave": true,
 
-  //typescript | javascript
+  // typescript | javascript
   "typescript.updateImportsOnFileMove.enabled": "prompt",
 
-  //python
+  // python
   "python.formatting.provider": "black",
   "python.linting.enabled": true,
   "python.linting.flake8Enabled": true,
 
-  //prettier
+  // prettier
   "prettier.statusItemText": "🅟",
+  "prettier.singleQuote": true,
+  "prettier.arrowParens": "avoid",
+
+  // snippets
+  "suggest.snippetsSupport": true,
+  "snippets.ultisnips.enable": true,
+  "snippets.snipmate.enable": false,
+  "snippets.loadFromExtensions": true,
+  "snippets.priority": 10,
 
   // coc lsp icons
   "suggest.completionItemKindLabels": {
@@ -42,7 +51,7 @@
     "enumMember": "  enumMember"
   },
 
-  //coc diagnostics
+  // coc diagnostics
   "diagnostic.enableMessage": "jump",
   "diagnostic.refreshOnInsertMode": true,
   "diagnostic.errorSign": "●",
