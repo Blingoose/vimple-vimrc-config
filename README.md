@@ -6,7 +6,7 @@ Welcome to my Vim setup, where Vim and Simple combine to create Vimple—a strai
 2. Download Node.js.
 3. Create the necessary directories:
    ```bash
-   mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/plugged
+   mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/plugged ~/.vim/snippets
    ```
 4. Download and install **Vim Plug**:
    - [Vim Plug GitHub](https://github.com/junegunn/vim-plug)
