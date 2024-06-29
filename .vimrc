@@ -259,6 +259,56 @@ nnoremap <silent> ± :NERDTreeToggle<CR>
 
 " }}}
 
+" GENERAL VIM SCRIPT ---------------------------------------------------------------- {{{
+
+" Inspect $TERM instead of hardcoding t_Co=256.
+if &term =~ '256color'
+  " Enable true (24-bit) colors instead of (8-bit) 256 colors.
+  " :h true-color
+  if has('termguicolors')
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    set termguicolors
+    set background=dark
+    colorscheme onedark 
+  endif
+endif
+
+" Auto-resize splits when Vim get resized.
+function! ResizeWindows()
+    let savetab = tabpagenr()
+    tabdo wincmd =
+    execute 'tabnext' savetab
+endfunction
+autocmd VimResized * call ResizeWindows()
+
+" Filetype-specific settings
+augroup FiletypeSettings
+    autocmd!
+    " Enable marker-based folding for Vim script files
+    autocmd FileType vim setlocal foldmethod=marker
+    " Set indentation to 2 spaces for HTML files
+    autocmd Filetype html setlocal tabstop=2 shiftwidth=2 expandtab
+augroup END
+
+" sets up an autocommand group that ensures filetype is detected 
+" and that other necessary autocommands are triggered
+augroup FileTypeAutodetect
+    autocmd!
+    autocmd BufFilePost * filetype detect
+    autocmd BufFilePost * silent! doautocmd BufReadPost
+augroup END
+
+augroup PythonFile
+    autocmd!
+    " Remove trailing whitespace from Python files on save.
+    autocmd BufWritePre *.py :%s/\s\+$//e
+    " Remove blank lines at the end of the file.
+    autocmd BufWritePre *.py :%s/\(\n\)\+\%$//e
+augroup END
+
+" }}}
+
 " COC SETTINGS  ---------------------------------------------------------------- {{{
 
 " Use tab for trigger completion with characters ahead and navigate
@@ -415,6 +465,10 @@ endfunction
 " Map to toggle the diagnostic float window
 nnoremap <silent> <leader>d :call ToggleDiagnosticFloat()<CR>
 
+" Pum (language server) completions menu colors
+hi CocMenuSel ctermbg=39 guibg=#000000
+hi CocSearch ctermfg=12 guifg=#F16B0F
+
 " }}}
 
 " COC SNIPPETS ---------------------------------------------------------------- {{{
@@ -433,60 +487,6 @@ let g:coc_snippet_prev = '<c-k>'
 
 " Use <leader>x for convert visual selected code to snippet
 xmap <leader>x  <Plug>(coc-convert-snippet)
-
-" }}}
-
-" GENERAL VIM SCRIPT ---------------------------------------------------------------- {{{
-
-" Inspect $TERM instead of hardcoding t_Co=256.
-if &term =~ '256color'
-  " Enable true (24-bit) colors instead of (8-bit) 256 colors.
-  " :h true-color
-  if has('termguicolors')
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-    set termguicolors
-    set background=dark
-    colorscheme onedark 
-  endif
-endif
-
-" Pum completions colors
-hi CocMenuSel ctermbg=39 guibg=#000000
-hi CocSearch ctermfg=12 guifg=#F16B0F
-
-" Auto-resize splits when Vim get resized.
-function! ResizeWindows()
-    let savetab = tabpagenr()
-    tabdo wincmd =
-    execute 'tabnext' savetab
-endfunction
-autocmd VimResized * call ResizeWindows()
-
-" Filetype-specific settings
-augroup FiletypeSettings
-    autocmd!
-    " Enable marker-based folding for Vim script files
-    autocmd FileType vim setlocal foldmethod=marker
-    " Set indentation to 2 spaces for HTML files
-    autocmd Filetype html setlocal tabstop=2 shiftwidth=2 expandtab
-augroup END
-
-" sets up an autocommand group that ensures filetype is detected 
-" and that other necessary autocommands are triggered
-augroup FileTypeAutodetect
-    autocmd!
-    autocmd BufFilePost * filetype detect
-    autocmd BufFilePost * silent! doautocmd BufReadPost
-augroup END
-
-augroup PythonFile
-    autocmd!
-    " Remove trailing whitespace from Python files on save.
-    autocmd BufWritePre *.py :%s/\s\+$//e
-    " Remove blank lines at the end of the file.
-    autocmd BufWritePre *.py :%s/\(\n\)\+\%$//e
-augroup END
 
 " }}}
 
