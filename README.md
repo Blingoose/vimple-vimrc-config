@@ -72,7 +72,7 @@ Below is a list of all key bindings and their actions from the `.vimrc`:
 
 - `,`: Leader key
 - `\\`: Jump back to the last cursor position
-- `Ctrl-Shift-H`: Turn off search highlighting (Ctrl + Shift + H)
+- `<leader>hh`: Turn off search highlighting (hide highlightings)
 - `o`: Open a new line below the current one
 - `O`: Open a new line above the current one
 - `n`: Move to the next search match and center the cursor
