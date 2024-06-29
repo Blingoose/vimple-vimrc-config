@@ -1,8 +1,8 @@
 " =============================================================================
 " Filename: autoload/lightline/colorscheme/solarized.vim
-" Author: itchyny
+" Author: itchyny & blingoose
 " License: MIT License
-" Last Change: 2020/04/06 19:22:53.
+" Last Change: 2024/06/30 00:57:05.
 " =============================================================================
 
 let s:cuicolors = {
@@ -80,6 +80,5 @@ let s:p.normal.error = [ [ s:base03, s:red ] ]
 let s:p.normal.warning = [ [ s:base03, s:yellow ] ]
 let s:p.normal.hint = [ [ s:base03, s:skyblue ] ] 
 let s:p.normal.info = [ [ s:base03, s:base1 ] ]
-
 
 let g:lightline#colorscheme#solarized#palette = lightline#colorscheme#flatten(s:p)
