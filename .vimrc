@@ -163,8 +163,8 @@ let mapleader = ','
 " Press \\ to jump back to the last cursor position.
 nnoremap \\ ``
 
-" Press <leader>h to turn off search highlighting.
-nnoremap <silent> <leader>h :nohlsearch<CR>
+" Press <ctrl^ shift h> to turn off search highlighting.
+nnoremap <silent> <C-S-H> :nohlsearch<CR>
 
 " Type jk to exit insert mode quickly.
 " inoremap jk <Esc>

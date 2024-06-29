@@ -72,7 +72,7 @@ Below is a list of all key bindings and their actions from the `.vimrc`:
 
 - `,`: Leader key
 - `\\`: Jump back to the last cursor position
-- `<leader>h`: Turn off search highlighting
+- `Ctrl-Shift-H`: Turn off search highlighting (Ctrl + Shift + H)
 - `o`: Open a new line below the current one
 - `O`: Open a new line above the current one
 - `n`: Move to the next search match and center the cursor
@@ -108,7 +108,7 @@ Below is a list of all key bindings and their actions from the `.vimrc`:
 - `<leader>qf`: Apply quick fix action
 - `<leader>re`: Apply refactor code action
 - `<leader>cl`: Run Code Lens action
-- `<C-s>`: Select range
+- `<Ctrl-s>`: Select range
 - `<space>a`: Show all diagnostics
 - `<space>e`: Manage extensions
 - `<space>c`: Show commands
@@ -119,14 +119,14 @@ Below is a list of all key bindings and their actions from the `.vimrc`:
 - `<space>p`: Resume latest coc list
 - `<leader>d`: Toggle diagnostic float window
 - `<TAB>`: Scroll forward through completions
-- `<S-TAB>`: Scroll backward through completions
+- `<Shift-TAB>`: Scroll backward through completions
 - `<Esc>[1;5I`: Toggle completion menu (Note for user: change mappings to something like `<c-space>` instead of `<Esc>[1;5I` in .vimrc)
 - `<leader>sc`: Toggle color highlight On/OFF (show color)
 - `<leader>cc`: Change color when cursor is on a highlighted color. Color highlight must be ON.
-- `<C-l>`: Trigger snippet expand
-- `` <C-`> ``: Expand and jump (make expand higher priority)
-- `<C-j>`: Jump to the next placeholder (default of coc.nvim)
-- `<C-k>`: Jump to the previous placeholder (default of coc.nvim)
+- `Ctrl-l`: Trigger snippet expand
+- `` Ctrl-` ``: Expand and jump (make expand higher priority)
+- `Ctrl-j`: Jump to the next placeholder (default of coc.nvim)
+- `Ctrl-k`: Jump to the previous placeholder (default of coc.nvim)
 - `<leader>x`: Convert visual selected code to snippet
 
 ### Special Note on Keybinding Customization
