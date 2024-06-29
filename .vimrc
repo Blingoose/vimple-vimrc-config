@@ -422,8 +422,8 @@ nnoremap <silent> <leader>d :call ToggleDiagnosticFloat()<CR>
 " Use <C-l> for trigger snippet expand.
 imap <C-l> <Plug>(coc-snippets-expand)
 
-" Use <C-j> for both expand and jump (make expand higher priority.)
-imap <C-§> <Plug>(coc-snippets-expand-jump)
+" Use <C-`> for both expand and jump (make expand higher priority.)
+imap <C-`> <Plug>(coc-snippets-expand-jump)
 
 " Use <C-j> for jump to next placeholder, it's default of coc.nvim
 let g:coc_snippet_next = '<c-j>'
