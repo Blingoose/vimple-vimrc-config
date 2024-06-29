@@ -123,6 +123,11 @@ Below is a list of all key bindings and their actions from the `.vimrc`:
 - `<Esc>[1;5I`: Toggle completion menu (Note for user: change mappings to something like `<c-space>` instead of `<Esc>[1;5I` in .vimrc)
 - `<leader>sc`: Toggle color highlight On/OFF (show color)
 - `<leader>cc`: Change color when cursor is on a highlighted color. Color highlight must be ON.
+- `<C-l>`: Trigger snippet expand
+- `<C-&#96>`: Expand and jump (make expand higher priority)
+- `<C-j>`: Jump to the next placeholder (default of coc.nvim)
+- `<C-k>`: Jump to the previous placeholder (default of coc.nvim)
+- `<leader>x`: Convert visual selected code to snippet
 
 ### Special Note on Keybinding Customization
 
