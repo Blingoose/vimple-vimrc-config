@@ -21,7 +21,7 @@
   "snippets.snipmate.enable": false,
   "snippets.loadFromExtensions": true,
   "snippets.priority": 10,
-  // "snippets.userSnippetsDirectory": "~/.config/coc/ultisnips",
+  "snippets.userSnippetsDirectory": "~/.vim/snippets",
   // "snippets.ultisnips.directories": ["~/.vim/plugged/vim-snippets/UltiSnips"],
 
   // coc lsp icons
