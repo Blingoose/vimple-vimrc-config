@@ -656,9 +656,13 @@ endfunction
 " Always display the status line
 set laststatus=2
 
-" Initialize variables to store git branch name and number of changes
+" Initialize variables to store git branch name, number of changes and git root
+let g:git_root = ''
 let g:git_branch = ''
 let g:git_files_changed = 0
+
+" Global variable to store all output from git status
+let g:git_status_output = []
 
 " Configuration for the Lightline plugin
 let g:lightline = {
@@ -783,8 +787,20 @@ function! LightlineFiletype() abort
         return &filetype
     endif
 
+" Fetch filetype icon symbol and print it if exists.
     let l:icon = WebDevIconsGetFileTypeSymbol()
     return winwidth(0) > 76 ? (&filetype . ' ' . l:icon) : l:icon
+endfunction
+
+" Function to check if the current directory is a git repository
+function! IsGitRepo() abort
+    try
+        let g:git_root = fugitive#repo().tree()
+        return !empty(g:git_root)
+    catch
+        let g:git_root = ''
+        return 0
+    endtry
 endfunction
 
 " Function to get the current git branch
@@ -793,51 +809,13 @@ function! GetCurrentGitBranch() abort
     return empty(l:head) ? '' : " \uf126 " . l:head
 endfunction
 
-" Function to check if the current directory is a git repository
-function! IsGitRepo() abort
-    let l:current_dir = expand('%:p:h')
-    let l:git_check = systemlist('git -C ' . l:current_dir . ' rev-parse --is-inside-work-tree 2>/dev/null')
-    return !empty(l:git_check) && l:git_check[0] ==# 'true'
-endfunction
-
 function! GetCurrentGitChanges() abort
     if index(['nerdtree', 'gitcommit'], &filetype) != -1 || &buftype == 'terminal' || empty(g:git_branch)
         return ''
     endif
     
-    let [a, m, r] = GitGutterGetHunkSummary()
-    return a + m + r > 0 ? printf('[+%d ~%d -%d]', a, m, r) : ''
-endfunction
-
-function! ClearGitStatus()
-    let g:git_branch = ''
-    let g:git_files_changed = 0
-    call lightline#update()
-endfunction
-
-" Function to update git information
-function! UpdateGitInfo() abort
-    if index(['help', 'quickfix', 'nofile', 'terminal'], &buftype) != -1 || &filetype == 'gitcommit'
-        call ClearGitStatus()
-        return
-    endif
-
-    if executable('git') && IsGitRepo()
-        let new_branch = GetCurrentGitBranch()
-        let new_changes = GetGitFilesChanged()
-        if new_branch != g:git_branch || new_changes != g:git_files_changed
-            let g:git_branch = new_branch
-            let g:git_files_changed = new_changes
-            call lightline#update()
-        endif
-    else
-        call ClearGitStatus()
-    endif
-endfunction
-
-" Function to get the number of files changed but not committed to git
-function! GetGitFilesChanged() abort
-    return len(filter(systemlist('git -C ' . expand('%:p:h') . ' status --porcelain 2>/dev/null'), 'v:val !=# ""'))
+    let [added, modified, removed] = GitGutterGetHunkSummary()
+    return (added + modified + removed > 0 ? printf('[+%d ~%d -%d]', added, modified, removed) : '')
 endfunction
 
 " Function to display git information in Lightline
@@ -848,9 +826,76 @@ function! LightlineGitInfo() abort
     return (g:git_files_changed > 0 ? '+' . g:git_files_changed : '') . g:git_branch
 endfunction
 
-augroup GitIntegration
+" Function to clear git branch and changed files value, then update status line.
+function! ClearGitStatus()
+    let g:git_branch = ''
+    let g:git_files_changed = 0
+    call lightline#update()
+endfunction
+
+" Async git status check
+function! AsyncGitStatus(job, msg)
+    if type(a:msg) == v:t_string
+        call add(g:git_status_output, a:msg)
+    elseif type(a:msg) == v:t_list
+        call extend(g:git_status_output, a:msg)
+    endif
+endfunction
+
+function! AsyncGitStatusExit(job, status)
+    let g:git_files_changed = len(filter(g:git_status_output, 'v:val !=# ""'))
+    let g:git_status_output = []  " Clear the output for the next run
+    call lightline#update()
+endfunction
+
+function! StartAsyncGitStatus()
+    if empty(g:git_root)
+        return
+    endif
+    let g:git_status_output = []  " Clear previous output
+    let l:cmd = ['git', '-C', g:git_root, 'status', '--porcelain']
+    call job_start(l:cmd, {'callback': 'AsyncGitStatus', 'exit_cb': 'AsyncGitStatusExit'})
+endfunction
+
+function! UpdateGitInfo() abort
+    if index(['help', 'quickfix', 'nofile', 'terminal'], &buftype) != -1 || &filetype == 'gitcommit'
+        call ClearGitStatus()
+        return
+    endif
+    if executable('git')
+        let new_branch = GetCurrentGitBranch()
+        if new_branch != g:git_branch
+            let g:git_branch = new_branch
+        endif
+        call StartAsyncGitStatus()
+    else
+        call ClearGitStatus()
+    endif
+endfunction
+
+" Check if it's a git repo and update git info
+function! CheckAndUpdateGitInfo(timer)
+    if IsGitRepo()
+        call UpdateGitInfo()
+    else
+        call ClearGitStatus()
+    endif
+endfunction
+
+" Debounce function
+let s:update_timer = -1
+function! DebouncedGitUpdate(delay)
+    if s:update_timer != -1
+        call timer_stop(s:update_timer)
+    endif
+    let s:update_timer = timer_start(a:delay, 'CheckAndUpdateGitInfo')
+endfunction
+
+" Set up autocommands to trigger updates
+augroup GitStatusUpdate
     autocmd!
-    autocmd BufEnter,TabEnter,BufWritePost * call UpdateGitInfo()
+    autocmd BufWritePost,BufEnter,FocusGained * call DebouncedGitUpdate(500)
+    autocmd CursorHold,CursorHoldI * call DebouncedGitUpdate(1000)
 augroup END
 
 augroup CocDiagnostic
