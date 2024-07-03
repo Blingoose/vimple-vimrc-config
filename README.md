@@ -91,7 +91,7 @@ To edit `coc-settings.json` within Vim, use:
 
 Below is a list of all key bindings and their actions from the `vimrc`:
 
-### Fold/Unfold when inside .vimrc:
+### Fold/Unfold when inside [vimrc]:
 
 - `zo`: Fold open.
 - `zm`: Fold close.
