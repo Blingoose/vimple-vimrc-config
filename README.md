@@ -120,7 +120,7 @@ Below is a list of all key bindings and their actions from the `vimrc`:
 - `<leader>bn`: Next buffer
 - `<leader>bp`: Previous buffer
 - `<leader>n`: Exit to terminal Normal-mode
-- `±`: Toggle NERDTree (Note for user: change mappings to something like `<leader>e` instead of `±` in .vimrc)
+- `±`: Toggle NERDTree (Note for user: change mappings to something like `<leader>e` instead of `±` in vimrc)
 - `[g`: Previous diagnostic
 - `]g`: Next diagnostic
 - `gd`: Go to definition
@@ -148,7 +148,7 @@ Below is a list of all key bindings and their actions from the `vimrc`:
 - `<leader>d`: Toggle diagnostic float window
 - `<TAB>`: Scroll forward through completions
 - `<Shift-TAB>`: Scroll backward through completions
-- `<Esc>[1;5I`: Toggle completion menu (Note for user: change mappings to something like `<c-space>` instead of `<Esc>[1;5I` in .vimrc)
+- `<Esc>[1;5I`: Toggle completion menu (Note for user: change mappings to something like `<c-space>` instead of `<Esc>[1;5I` in vimrc)
 - `<leader>sc`: Toggle color highlight On/OFF (show color)
 - `<leader>cc`: Change color when cursor is on a highlighted color. Color highlight must be ON.
 - `Ctrl-l`: Trigger snippet expand
