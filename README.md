@@ -1,17 +1,34 @@
 Welcome to my Vim setup, where Vim and Simple combine to create Vimple—a straightforward yet powerful IDE-like experience that's reliable and straightforward.
 
+## Support for the XDG Base Directory Specification
+
+[2024-04-18] [Patch 9.1.327](https://github.com/vim/vim/commit/9a12327) brings
+support for the freedesktop [XDG Base Directory Specification](https://
+specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) and has
+now been merged. A few more adjustments have been made with the following
+patches: [v9.1.0337](https://github.com/vim/vim/commit/9b10337) and
+[9.1.345](https://github.com/vim/vim/commit/9c11345). That means, you can now
+place your configuration files under `~/.config/vim/` instead of `~/.vim` so Vim
+will stop littering your home directory.
+
+**Note:** To make this change backwards compatible, Vim will only attempt to
+source from that location, if `~/.vim/vimrc` and `~/.vimrc` file do not exist.
+So it won't impact existing users, but users that want to start using the new
+location, will need to move their existing configuration to the new place. You
+can also read about it at `:h xdg-base-dir`.
+
 ## Preparation
 
 1. Download Vim (not Neovim).
 2. Download Node.js.
 3. Create the necessary directories:
    ```bash
-   mkdir -p ~/.vim ~/.vim/autoload ~/.vim/backup ~/.vim/plugged ~/.vim/snippets
+   mkdir -p ~/.config/vim ~/.config/vim/autoload ~/.config/vim/backup ~/.config/vim/plugged ~/.config/vim/snippets
    ```
 4. Download and install **Vim Plug**:
    - [Vim Plug GitHub](https://github.com/junegunn/vim-plug)
    ```bash
-   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+   curl -fLo ~/.config/vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
    ```
 5. Copy my `.vimrc` file or parts from it to your `$HOME` directory.
@@ -24,11 +41,13 @@ Welcome to my Vim setup, where Vim and Simple combine to create Vimple—a strai
 9. Download and install nerd font:
    - [Download Meslo nerd font](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#meslo-nerd-font-patched-for-powerlevel10k)
    - set your terminal to use newly installed meslo font.
-10. Enjoy and keep it simple.
+10. Download and install Universal-ctags needed for gutentags plugin.
+
+- [Universal-ctags](https://github.com/universal-ctags/ctags)
+
+11. Enjoy and keep it simple.
 
 ## Using Coc for Completion
-
-The provided `coc-settings.json` is configured mainly for Python and web development.
 
 ### Prerequisites
 
@@ -37,11 +56,11 @@ The provided `coc-settings.json` is configured mainly for Python and web develop
 - **Black** (formatter): `pip install black`
 - **Flake8** (linter): `pip install flake8`
 
-2. Place the `coc-settings.json` in your `~/.vim` directory.
+2. Use the provided `coc-settings.json` and put it inside `~/.config/vim/`
 
 3. I have provided a customized 'solarized.vim' file in [custom_color scheme_lightline/solarized.vim](https://raw.githubusercontent.com/Blingoose/vimple_vimrc_config/main/custom_color%20scheme_lightline/solarized.vim)
    Copy this provided colorscheme instead of the original 'solarized.vim' which can be found at:
-   /Users/{userAccountName}/.vim/plugged/lightline.vim/autoload/lightline/colorscheme
+   /Users/{userAccountName}/.config/vim/plugged/lightline.vim/autoload/lightline/colorscheme
 
 ### Installation of CoC Extensions
 
