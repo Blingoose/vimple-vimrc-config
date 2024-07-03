@@ -1,4 +1,7 @@
-Welcome to my Vim setup, where Vim and Simple combine to create Vimple—a straightforward yet powerful IDE-like experience that's reliable and straightforward.
+# Vimple
+
+Welcome to my Vim setup, where Vim and Simple combine to create Vimple—
+a straightforward yet powerful IDE-like experience that's reliable and very functional.
 
 ## Support for the XDG Base Directory Specification
 
