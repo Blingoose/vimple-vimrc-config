@@ -5,12 +5,11 @@ a straightforward yet powerful IDE-like experience that's reliable and very func
 
 ## Support for the XDG Base Directory Specification
 
-[2024-04-18] [Patch 9.1.327](https://github.com/vim/vim/commit/9a12327) brings
-support for the freedesktop [XDG Base Directory Specification](https://
-specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html) and has
+[2024-04-18] [Patch 9.1.327](https://github.com/vim/vim/commit/c9df1fb35a1866901c32df37dd39c8b39dbdb64a) brings
+support for the freedesktop [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/index.html) and has
 now been merged. A few more adjustments have been made with the following
-patches: [v9.1.0337](https://github.com/vim/vim/commit/9b10337) and
-[9.1.345](https://github.com/vim/vim/commit/9c11345). That means, you can now
+patches: [v9.1.0337](https://github.com/vim/vim/commit/d1068a2bb09fd3b9d117d832105bf10dd5e48e2f) and
+[9.1.345](https://github.com/vim/vim/commit/a34ba821076476a68e0e579723d68e896f771ba6). That means, you can now
 place your configuration files under `~/.config/vim/` instead of `~/.vim` so Vim
 will stop littering your home directory.
 
@@ -18,7 +17,7 @@ will stop littering your home directory.
 source from that location, if `~/.vim/vimrc` and `~/.vimrc` file do not exist.
 So it won't impact existing users, but users that want to start using the new
 location, will need to move their existing configuration to the new place. You
-can also read about it at `:h xdg-base-dir`.
+can also read about it at [:h xdg-base-dir](https://vimhelp.org/starting.txt.html#xdg-base-dir)
 
 ## Preparation
 
