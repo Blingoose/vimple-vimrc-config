@@ -21,8 +21,8 @@
   "snippets.snipmate.enable": false,
   "snippets.loadFromExtensions": true,
   "snippets.priority": 10,
-  "snippets.userSnippetsDirectory": "~/.vim/snippets",
-  // "snippets.ultisnips.directories": ["~/.vim/plugged/vim-snippets/UltiSnips"],
+  "snippets.userSnippetsDirectory": "~/.config/vim/snippets",
+  // "snippets.ultisnips.directories": ["~/.config/vim/plugged/vim-snippets/UltiSnips"],
 
   // coc lsp icons
   "suggest.completionItemKindLabels": {
@@ -65,5 +65,5 @@
   "diagnostic.virtualTextCurrentLineOnly": false,
 
   // coc highlight
-  "colors.enable": true
+  "colors.enable": true,
 }
