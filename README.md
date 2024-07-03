@@ -180,3 +180,5 @@ nnoremap <leader>e :NERDTreeToggle<CR>
 <img width="868" alt="Screenshot 2024-06-16 at 0 57 21" src="https://github.com/Blingoose/vimple_vimrc_config/assets/108837766/5039e015-45f7-4a1f-88fb-e2dc6bae5593">
 
 <img width="1101" alt="Screenshot 2024-06-16 at 1 03 48" src="https://github.com/Blingoose/vimple_vimrc_config/assets/108837766/16351b69-27d1-4a0e-b685-7a86ab53679d">
+
+<img width="1093" alt="Screenshot 2024-07-02 at 20 55 13" src="https://github.com/Blingoose/vimple_vimrc_config/assets/108837766/f3f18dbc-b9e1-4950-9643-1ef276f928c4">
