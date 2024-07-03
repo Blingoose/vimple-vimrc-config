@@ -52,7 +52,7 @@ can also read about it at [:h xdg-base-dir](https://vimhelp.org/starting.txt.htm
 - [Download Meslo nerd font](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#meslo-nerd-font-patched-for-powerlevel10k)
 - set your terminal to use newly installed meslo font.
 
-10. Download and install Universal-ctags needed for gutentags plugin.
+10. Download and install Universal-ctags needed for gutentags plugin:
 
 - [Universal-ctags](https://github.com/universal-ctags/ctags)
 
