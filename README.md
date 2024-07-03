@@ -31,12 +31,12 @@ can also read about it at [:h xdg-base-dir](https://vimhelp.org/starting.txt.htm
 
 4. Download and install **Vim Plug**:
 
-   - [Vim Plug GitHub](https://github.com/junegunn/vim-plug)
+- [Vim Plug GitHub](https://github.com/junegunn/vim-plug)
 
-   ```bash
-   curl -fLo ~/.config/vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-   ```
+  ```bash
+  curl -fLo ~/.config/vim/autoload/plug.vim --create-dirs \
+   https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  ```
 
 5. Copy the provided `vimrc` file or parts from it to your `$HOME/.config/vim` or `~/.config/vim` directory.
 6. Open Vim, ignore any startup errors, and run:
@@ -49,10 +49,10 @@ can also read about it at [:h xdg-base-dir](https://vimhelp.org/starting.txt.htm
 8. Configure the `vimrc` file to suit your style and needs.
 9. Download and install nerd font:
 
-   - [Download Meslo nerd font](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#meslo-nerd-font-patched-for-powerlevel10k)
-   - set your terminal to use newly installed meslo font.
+- [Download Meslo nerd font](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#meslo-nerd-font-patched-for-powerlevel10k)
+- set your terminal to use newly installed meslo font.
 
-10. Download and install Universal-ctags needed for gutentags plugin.
+  10.Download and install Universal-ctags needed for gutentags plugin.
 
 - [Universal-ctags](https://github.com/universal-ctags/ctags)
 
@@ -89,7 +89,7 @@ To edit `coc-settings.json` within Vim, use:
 
 ## Key Mappings and Shortcuts
 
-Below is a list of all key bindings and their actions from the `.vimrc`:
+Below is a list of all key bindings and their actions from the `vimrc`:
 
 ### Fold/Unfold when inside .vimrc:
 
