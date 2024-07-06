@@ -26,7 +26,7 @@ can also read about it at [:h xdg-base-dir](https://vimhelp.org/starting.txt.htm
 3. Create the necessary directories:
 
    ```bash
-   mkdir -p ~/.config/vim ~/.config/vim/autoload ~/.config/vim/backup ~/.config/vim/plugged ~/.config/vim/snippets
+   mkdir -p ~/.config/vim ~/.config/vim/autoload ~/.config/vim/undo ~/.config/vim/swap ~/.config/vim/plugged ~/.config/vim/snippets
    ```
 
 4. Download and install **Vim Plug**:
