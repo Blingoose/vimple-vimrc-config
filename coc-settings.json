@@ -54,16 +54,25 @@
   },
 
   // coc diagnostics
-  "diagnostic.enableMessage": "jump",
-  "diagnostic.refreshOnInsertMode": true,
   "diagnostic.errorSign": "●",
   "diagnostic.warningSign": "●",
   "diagnostic.infoSign": "●",
   "diagnostic.hintSign": "●",
+  "diagnostic.refreshOnInsertMode": false,
+  "diagnostic.enableMessage": "jump",
   "diagnostic.checkCurrentLine": true,
   "diagnostic.virtualText": true,
   "diagnostic.virtualTextCurrentLineOnly": false,
 
   // coc highlight
   "colors.enable": true,
+
+  // coc explorer
+  "explorer.file.showHiddenFiles": true,
+  "explorer.icon.source": "vim-devicons",
+  "explorer.icon.enableNerdfont": true,
+  "explorer.previewAction.onHover": false,
+  "explorer.filename.colored.enable": true,
+  "coc.preferences.extensionUpdateCheck": "daily"
+  // "explorer.file.child.template": "[git | 2] [selection | clip | 1] [indent] [icon | 1] [diagnosticError & 1] [filename omitCenter 1] [modified] [readonly] [linkIcon & 1] [link growRight 1 omitCenter 5]"
 }
