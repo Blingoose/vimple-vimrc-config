@@ -9,228 +9,270 @@
 "                 ╚═══╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝                   "
 "                                                                         "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" ### NAVIGATION ###
-" Press 'zo' to fold-open.
-" Press 'zm' to fold-close.
+"                             NAVIGATION:                                 "
+"                       Press 'zo' to open-fold                           "
+"                       Press 'zm' to close-fold                          "
+"                                                                         "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" DEFAULTS ---------------------------------------------------------------- {{{
+" DISABLED FEATURES AND FALLBACK: ······································································································································{{{
 
-" Set runtime path to include the new configuration directory
-set rtp^=~/.config/vim
+" Fallback vimrc 
+"-----------------------
+if $TERM_PROGRAM ==# 'Apple_Terminal' 
+    " Load minimal configuration
+    source ~/.config/vim/fallback_minimal_vimrc  " Adjust this path as needed
+    autocmd VimEnter * call timer_start(10, { -> feedkeys("\<C-L>") })
+    autocmd VimEnter * call timer_start(100, function('s:ShowStartupMessage'))
+    function! s:ShowStartupMessage(timer)
+        echom "Vim started in minimal mode due to terminal limitations. For full functionality, consider using a terminal with true color support."
+    endfunction
+    finish  " Stop processing the rest of the vimrc
+endif
 
-" Enable fuzzy-finder (fzf install required first).
-set rtp+=/opt/homebrew/opt/fzf
+" Disabled functionality:
+"------------------------
+" Don't parse modelines (google vim modeline vulnerability).
+set nomodeline
+" Disable native netrw file explorer (make sure vim is up to date)
+" We're using coc-explorer instead
+let g:loaded_netrw  = 0
+let g:loaded_netrwPlugin = 0
+" Simulate as if matchit is already loaded, effectively disabling it
+" we're using vim-matchup instead.
+let g:loaded_matchit = 1
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
 
-" Disable compatibility with vi which can cause unexpected issues.
-set nocompatible
-
-" More powerful backspace.
-set backspace=indent,eol,start
-
-" enable mouse support. 
-set mouse=a
-
-" Enable type file detection. Vim will be able to try to detect the type of file is use.
-filetype on
-
-" Enable plugins and load plugin for the detected file type.
-filetype plugin on
-
-" Load an indent file for the detected file type.
-filetype indent on
-
-" To disable auto-comments permanently.
-autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
-
-" Turn syntax highlighting on.
-syntax on
-
-" Add numbers to the file.
-set number
-
-" Highlight cursor line underneath the cursor horizontally.
-set nocursorline
-
-" Highlight cursor line underneath the cursor vertically.
-set nocursorcolumn
-
-" Set shift width to 4 spaces.
-set shiftwidth=4
-
-" Set tab width to 4 columns.
-set tabstop=4
-
-" Use space characters instead of tabs.
-set expandtab
-
-" Do not let cursor scroll below or above N number of lines when scrolling.
-set scrolloff=10
-
-" Do not wrap lines. Allow long lines to extend as far as the line goes.
-set nowrap
-
-" While searching though a file incrementally highlight matching characters as you type.
-set incsearch
-
-" Ignore capital letters during search.
-set ignorecase
-
-" Override the ignorecase option if searching for capital letters.
-" This will allow you to search specifically for capital letters.
-set smartcase
-
-" Show partial command you type in the last line of the screen.
-set showcmd
-
-" Show the mode you are on the last line.
-set showmode
-
-" Show matching words during a search also [] {} and ().
-set showmatch
-
-" Auto indentation in new line.
-set autoindent
-
-" Use highlighting when doing a search.
-set hlsearch
-
-" Set the commands to save in history default number is 20.
-set history=1000
-
-" Enable auto completion menu after pressing TAB.
-set wildmenu
-
-" Make wildmenu behave like similar to Bash completion.
-set wildmode=list:longest
-
-" There are certain files that we would never want to edit with Vim.
-" Wildmenu will ignore files with these extensions.
-set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
-
-" Set internal encoding of vim, not needed on neovim, since coc.nvim using some
-" unicode characters in the file autoload/float.vim
-" **required for coc-nvim.
-set encoding=utf-8
-
-" Some servers have issues with backup files, see # 649.
-" **required for coc-nvim.
-set nobackup
-set nowritebackup
-
-" This allows you to undo changes to a file even after saving it.
-set undodir=~/.config/vim/backup
-set undofile
-set undoreload=10000
-
-" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
-" delays and poor user experience.
-" **required for coc-nvim.
-set updatetime=100
-
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved.
-" **required for coc-nvim.
-set signcolumn=yes
-
-" }}}
-
-" PLUGINS ---------------------------------------------------------------- {{{
+" PLUGINS: ·····························································································································································{{{
 
 call plug#begin('~/.config/vim/plugged')
 
-" ** Color Schemes **
-  Plug 'joshdick/onedark.vim'
+" Universal set of defaults that (hopefully) everyone can agree on 
+" (see: https://github.com/tpope/vim-sensible/blob/master/plugin/sensible.vim)
+  Plug 'tpope/vim-sensible'
+
+" ** Color Theming **
+  Plug 'joshdick/onedark.vim',
+  Plug 'lambdalisue/vim-glyph-palette',
+  Plug 'ryanoasis/vim-devicons'
 " ** Functionality
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  Plug 'preservim/nerdtree'
   Plug 'junegunn/fzf.vim'
   Plug 'itchyny/lightline.vim'
   Plug 'tpope/vim-commentary'
   Plug 'sheerun/vim-polyglot'
-  Plug 'ryanoasis/vim-devicons'
-  Plug 'jlanzarotta/bufexplorer'
   Plug 'tpope/vim-fugitive'
-  Plug 'philrunninger/nerdtree-visual-selection'
   Plug 'airblade/vim-gitgutter'
   Plug 'mattn/emmet-vim'
   Plug 'honza/vim-snippets'
   Plug 'skywind3000/vim-quickui'
   Plug 'ludovicchabant/vim-gutentags'
+  Plug 'andymass/vim-matchup'
+
 call plug#end()
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
 
-" }}}
+" DEFAULTS: ····························································································································································{{{
 
-" GENERAL MAPPING ---------------------------------------------------------------- {{{
+" Vim's runtime path
+set runtimepath+=~/.config/vim
 
-" Set the ',' as the leader key.
+" This allows you to undo changes to a file even after saving it
+set undodir=~/.config/vim/undo
+set undofile
+set undoreload=10000
+
+" Set swap dorectory for swap files
+set dir=~/.config/vim/swap
+
+" Enable fuzzy-finder (fzf install required first)
+set rtp+=/opt/homebrew/opt/fzf
+
+" Reduces the number of screen redraws, which can significantly improve performance
+set lazyredraw
+
+" enable mouse support 
+set mouse=a
+
+" Add numbers to the file
+set number
+
+" Disable any annoying beeps on errors.
+set noerrorbells
+
+" Flash the screen or the window to indicate an error or event
+set visualbell
+
+" Set window title by default.
+set title
+
+" Highlight cursor line underneath the cursor horizontally
+set nocursorline
+
+" Highlight cursor line underneath the cursor vertically
+set nocursorcolumn
+
+" Set shift width to 4 spaces
+set shiftwidth=4
+
+" Set tab width to 4 columns
+set tabstop=4
+
+" Use space characters instead of tabs
+set expandtab
+
+" Do not wrap lines. Allow long lines to extend as far as the line goes
+set nowrap
+
+" Ignore capital letters during search
+set ignorecase
+
+" Override the ignorecase option if searching for capital letters
+" This will allow you to search specifically for capital letters
+set smartcase
+
+" Show partial command you type in the last line of the screen
+set showcmd
+
+" Don't show mode in cmd line
+set noshowmode
+
+" Show matching words during a search also [] {} and ()
+set showmatch
+
+" Auto indentation in new line
+set autoindent
+
+" Use highlighting when doing a search
+set hlsearch
+
+" Make wildmenu behave like similar to Bash completion
+set wildmode=list:longest,full
+
+" There are certain files that we would never want to edit with Vim
+" Wildmenu will ignore files with these extensions
+set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
+
+" Set internal encoding of vim, not needed on neovim, since coc.nvim using some
+" unicode characters in the file autoload/float.vim
+" **required for coc-nvim
+set encoding=utf-8
+
+" Some servers have issues with backup files, see # 649
+" **required for coc-nvim.
+set nobackup
+set nowritebackup
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience
+" **required for coc-nvim
+set updatetime=300
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved
+" **required for coc-nvim
+set signcolumn=yes
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
+
+" VISUAL CONFIGURATIONS: ···················································································································································{{{
+
+"Onedark color ovverides
+let g:onedark_color_overrides = {
+\ "cursor_grey": {"gui": "#2D3C56", "cterm": "235", "cterm16": "0" },
+\ "vertsplit": { "gui": "#2D3C56", "cterm": "170", "cterm16": "5" }
+\}
+
+function! s:SetColorScheme()
+  if has('termguicolors')
+    " Check if the terminal supports true colors
+    if $COLORTERM ==# 'truecolor' || $COLORTERM ==# '24bit' || 
+      \ (has('vcon') && empty(&term) ? v:true : &term =~# '^\%(xterm\|screen\|tmux\|vte\|gnome\)\(-.*\)\?$')
+      let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+      let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+      set termguicolors
+      set background=dark
+      " Load onedark if it's available
+      if globpath(&rtp, 'colors/onedark.vim', 1) != ''
+        colorscheme onedark
+      else
+        " Fallback to a built-in dark scheme if onedark is not available
+        colorscheme desert
+      endif
+    else
+      " Terminal doesn't support true colors, use a basic color scheme
+      set notermguicolors
+      set background=dark
+      colorscheme slate
+    endif
+  else
+    " Termguicolors not supported, use a basic color scheme
+    set background=dark
+    colorscheme slate
+  endif
+endfunction
+
+" Call the function to set the color scheme
+call s:SetColorScheme()
+
+" Display folded text as Orange color
+hi Folded guifg=#FF8C00 ctermfg=214 guibg=NONE ctermbg=NONE
+
+" Replace the ugly vertical split lines with spaces instead of lines.
+set fillchars+=vert:\ 
+
+" Vertical split line color
+hi VertSplit guibg=#2D3C56
+hi StatusLineNC guibg=#2D3C56 
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
+
+" GENERAL MAPPING: ·····················································································································································{{{
+
+" Set the ',' as the leader key
 let mapleader = ','
 
-" Press \\ to jump back to the last cursor position.
+" Press \\ to jump back to the last cursor position
 nnoremap \\ ``
 
-" Press <leader>hh to turn off search highlighting.
-nnoremap <silent> <leader>hh :nohlsearch<CR>
-
-" Type jk to exit insert mode quickly.
-" inoremap jk <Esc>
-
-" Pressing the letter o will open a new line below the current one.
-" Exit insert mode after creating a new line above or below the current line.
+" Pressing the letter o will open a new line below the current one
+" Exit insert mode after creating a new line above or below the current line
 nnoremap o o<esc>
 nnoremap O O<esc>
 
-" Center the cursor vertically when moving to the next word during a search.
+" Center the cursor vertically when moving to the next word during a search
 nnoremap n nzz
 nnoremap N Nzz
 
-" Yank from cursor to the end of line.
+" Yank from cursor to the end of line
 nnoremap Y y$
 
-" Fuzzy-finder files search. 
+" Visually select the text that was last edited/pasted
+noremap gV `[v`]
+
+" Move cursor to the end the visual yanked text
+vnoremap <silent> y y`]
+
+" A fix for a common typo
+map q: :q
+
+" Fuzzy-finder files search 
 nnoremap <leader>p :Files<Cr>
-" Fuzzy-finder git search.
+" Fuzzy-finder git search
 nnoremap <leader>o :GFiles<Cr>
 
-" Ripgrep within fuzzy-finder.
+" Ripgrep within fuzzy-finder
 nnoremap <leader>i :Rg<Cr>
 
-" Map the F4 key to run a Python script inside Vim.
-" We map F4 to a chain of commands here.
-" :w saves the file.
-" <CR> (carriage return) is like pressing the enter key.
-" !clear runs the external clear screen command.
-" python % executes the current file with Python.
-nnoremap <f4> :w <CR> :!clear && python % <CR>
-imap <f4> <Esc> :w <CR> :!clear && python %<CR>
-" Run Node in separate buffer (See RUN PYTHON & NODE SCRIPT). 
-nnoremap <silent> <f5> :call SaveAndExecutePython()<CR>
-imap <silent> <f5> :<C-u>call SaveAndExecutePython()<CR>
+" Navigate the split view easier by pressing SHIFT+CTRL+j, SHIFT+CTRL+k, SHIFT+CTRL+h, or SHIFT+CTRL+l
+nnoremap <S-C-j> <C-w>j
+nnoremap <S-C-k> <C-w>k
+nnoremap <S-C-h> <C-w>h
+nnoremap <S-C-l> <C-w>l
 
-" Map the F6 key to run a Node script inside Vim.
-" We map F6 to a chain of commands here.
-" :w saves the file.
-" <CR> (carriage return) is like pressing the enter key.
-" !clear runs the external clear screen command.
-" node % executes the current file with Node.
-nnoremap <f6> :w <CR> :!clear && node % <CR>
-imap <f6> <Esc> :w <CR> :!clear && node %<CR>
-" Run Node in separate buffer (See RUN PYTHON & NODE SCRIPT).
-nnoremap <silent> <f7> :call SaveAndExecuteNode()<CR>
-imap <silent> <f7> :<C-u>call SaveAndExecuteNode()<CR>
-
-" You can split the window in Vim by typing :split or :vsplit.
-" Navigate the split view easier by pressing CTRL+j, CTRL+k, CTRL+h, or CTRL+l.
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
-
-" Resize split windows using arrow keys by pressing:
-" CTRL+UP, CTRL+DOWN, CTRL+LEFT, or CTRL+RIGHT.
-nnoremap <silent> <C-Left> :vertical resize -2<CR>
-nnoremap <silent> <C-Right> :vertical resize +2<CR>
-nnoremap <silent> <C-Up> :resize +2<CR>
-nnoremap <silent> <C-Down> :resize -2<CR>
+" Resize split windows using arrow keys by pressing SHIFT+CTRL+UP, SHIFT+CTRL+DOWN, SHIFT+CTRL+LEFT, or SHIFT+CTRL+RIGHT
+nnoremap <silent> <S-C-Left> :vertical resize -4<CR>
+nnoremap <silent> <S-C-Right> :vertical resize +4<CR>
+nnoremap <silent> <S-C-Up> :resize +4<CR>
+nnoremap <silent> <S-C-Down> :resize -4<CR>
 
 " Quick save
 nnoremap <leader>w :w<CR>
@@ -242,27 +284,10 @@ nnoremap <leader>q :q<CR>
 nnoremap <leader>bn :bnext<CR>
 nnoremap <leader>bp :bprevious<CR>
 
-" Exit to terminal Normal-mode.
+" Exit to terminal Normal-mode
 tnoremap <leader>n <C-\><C-n>
 
-" Toggle show color highlight
-nnoremap <silent> <leader>sc :CocCommand document.toggleColors<CR>
-
-" Function to pick a color and handle exit
-function! ChangeColor() abort
-    " Call the CocAction to pick a color
-    call CocAction('pickColor')
-    " Ensure the color picker buffer is closed and terminal is reset
-    silent! :redraw!
-endfunction
-" Map the leader key sequence to the custom function
-nnoremap <leader>cc :call ChangeColor()<CR>
-
-" NERDTree specific mappings.
-" Map the ± key to toggle NERDTree open and close.
-nnoremap <silent> ± :NERDTreeToggle<CR>
-
-" ## quick ui plugin
+" ### quick ui plugin ###
 " a glimpse to the definition of the current word under cursor without actually open that file
 nnoremap <F3> :call quickui#tools#preview_tag('')<cr>
 
@@ -271,25 +296,11 @@ nnoremap <silent> <TAB> :call quickui#preview#scroll(1)<CR>
 
 " Scroll up in the preview window when using quickui plugin for preview
 nnoremap <silent> <S-TAB> :call quickui#preview#scroll(-1)<CR>
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
 
-" }}}
+" GENERAL VIM SCRIPT: ··················································································································································{{{
 
-" GENERAL VIM SCRIPT ---------------------------------------------------------------- {{{
-
-" Inspect $TERM instead of hardcoding t_Co=256.
-if &term =~ '256color'
-  " Enable true (24-bit) colors instead of (8-bit) 256 colors.
-  " :h true-color
-  if has('termguicolors')
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-    set termguicolors
-    set background=dark
-    colorscheme onedark 
-  endif
-endif
-
-" Auto-resize splits when Vim get resized.
+" Auto-resize splits when Vim get resized
 function! ResizeWindows()
     let savetab = tabpagenr()
     tabdo wincmd =
@@ -298,16 +309,17 @@ endfunction
 autocmd VimResized * call ResizeWindows()
 
 " Filetype-specific settings
-augroup FiletypeSettings
+augroup FileTypeSettings
     autocmd!
+    " To disable auto-comments permanently
+    autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
     " Enable marker-based folding for Vim script files
-    autocmd FileType vim setlocal foldmethod=marker
+    autocmd FileType vim setlocal foldmethod=marker fillchars=fold:·
     " Set indentation to 2 spaces for HTML files
     autocmd Filetype html setlocal tabstop=2 shiftwidth=2 expandtab
 augroup END
 
-" sets up an autocommand group that ensures filetype is detected 
-" and that other necessary autocommands are triggered
+" Ensure filetype is detected when saving a new file and that other necessary autocmd's are triggered
 augroup FileTypeAutodetect
     autocmd!
     autocmd BufFilePost * filetype detect
@@ -316,15 +328,14 @@ augroup END
 
 augroup PythonFile
     autocmd!
-    " Remove trailing whitespace from Python files on save.
+    " Remove trailing whitespace from Python files on save
     autocmd BufWritePre *.py :%s/\s\+$//e
-    " Remove blank lines at the end of the file.
+    " Remove blank lines at the end of the file
     autocmd BufWritePre *.py :%s/\(\n\)\+\%$//e
 augroup END
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
 
-" }}}
-
-" COC SETTINGS  ---------------------------------------------------------------- {{{
+" COC LSP SETTINGS: ····················································································································································{{{
 
 " Set the location for CoC configuration files
 let g:coc_config_home = expand('~/.config/vim')
@@ -340,7 +351,7 @@ inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<C
         \ coc#pum#visible() ? coc#pum#next(1):
         \ CheckBackspace() ? "\<Tab>" :
         \ coc#refresh()
-    inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+    inoremap <silent> <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 " Use <ctrl-tab> to trigger on/off completion
     inoremap <silent><expr> <Esc>[1;5I coc#pum#visible() ? coc#pum#stop() : coc#refresh()
@@ -463,7 +474,9 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-" Custom Addition
+" ============================================================================
+"  Custom Coc Functionality
+" ============================================================================
 
 " Function to toggle the diagnostic float window
 function! ToggleDiagnosticFloat() abort
@@ -480,16 +493,31 @@ function! ToggleDiagnosticFloat() abort
     let g:diagnostic_float_open = !l:is_open
 endfunction
 
+" Function to pick a color and handle exit
+function! ChangeColor() abort
+    " Call the CocAction to pick a color
+    call CocAction('pickColor')
+    " Ensure the color picker buffer is closed and terminal is reset
+    silent! :redraw!
+endfunction
+
 " Map to toggle the diagnostic float window
 nnoremap <silent> <leader>d :call ToggleDiagnosticFloat()<CR>
 
-" Pum (language server) completions menu colors
+" Toggle show color highlight
+nnoremap <silent> <leader>sc :CocCommand document.toggleColors<CR>
+
+" Change color using cocAction('pickColor')
+nnoremap <leader>cc :call ChangeColor()<CR>
+
+" Custom colors for coc float completion window
 hi CocMenuSel ctermbg=39 guibg=#000000
-hi CocSearch ctermfg=12 guifg=#F16B0F
+hi CocSearch ctermfg=12 guifg=#F17B0F
+hi CocFloating guibg=#2D3C56 guifg=#D8DEE9
+hi CocFloatDividingLine guifg=#88C0D0
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
 
-" }}}
-
-" COC SNIPPETS ---------------------------------------------------------------- {{{
+" COC SNIPPETS: ························································································································································{{{
 
 " Use <C-l> for trigger snippet expand.
 imap <C-l> <Plug>(coc-snippets-expand)
@@ -505,61 +533,135 @@ let g:coc_snippet_prev = '<c-k>'
 
 " Use <leader>x for convert visual selected code to snippet
 xmap <leader>x  <Plug>(coc-convert-snippet)
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
 
-" }}}
+" COC EXPLORER: ························································································································································{{{
+ 
+" Presets
+let g:coc_explorer_global_presets = {
+\   '.vim': {
+\     'root-uri': '~/.config/vim',
+\   },
+\   'cocConfig': {
+\      'root-uri': '~/.config/coc',
+\   },
+\   'tab': {
+\     'position': 'tab',
+\     'quit-on-open': v:true,
+\   },
+\   'tab:$': {
+\     'position': 'tab:$',
+\     'quit-on-open': v:true,
+\   },
+\   'defaultLeft': {
+\     'position': 'left',
+\     'open-action-strategy': 'sourceWindow',
+\     'width': 10,
+\   },
+\   'simplify': {
+\   'file-child-template': '[git | 2] [selection | clip | 1] [indent][icon | 1] [diagnosticError & 1][filename omitCenter 1] [modified][readonly] [linkIcon & 1][link growRight 1 omitCenter 5]'
+\   },
+\ }
 
-" NERDTREE EXPLORER ---------------------------------------------------------------- {{{
+" Custom foreground and background colors for coc-explorer's float window  
+highlight CocExplorerNormalFloat guibg=#2D3C56 guifg=#D8DEE9
 
-" Hide nerdtree statusline
-let g:NERDTreeStatusline= -1
-" Show hidden files
-let g:NERDTreeShowHidden = 1
-" Have nerdtree ignore certain files and directories.
-let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
-
-" Group autocommands for NERDTree cursorline handling
-augroup NERDTreeCursorLine
+" Exit Vim/Close Tab when coc-explorer is the last window left
+augroup CocExplorerExitVim
     autocmd!
-    " If filetype is (i.e if we focused on) NERDTree show cursorline
-    autocmd BufEnter * if &filetype == 'nerdtree' | setlocal cursorline | endif
-    " If filetype is not NERDTree hide cursorline
-    autocmd BufLeave * if &filetype == 'nerdtree' | setlocal nocursorline | endif
+    " Exit Vim if coc-explorer is the only window remaining in the only tab.
+    autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && &filetype == 'coc-explorer' | call feedkeys(":quit\<CR>:\<BS>") | endif
+    " Close the tab if coc-explorer is the only window remaining in it.
+    autocmd BufEnter * if winnr('$') == 1 && &filetype == 'coc-explorer' | call feedkeys(":quit\<CR>:\<BS>") | endif
 augroup END
 
-" Refresh neerdtree when a newly file created and saved
-augroup NERDTreeAutoRefresh
-    autocmd!
-    " Refresh NERDTree upon saving a file, if NERDTree is open
-    autocmd BufWritePost * if exists("g:NERDTree") && g:NERDTree.IsOpen() | NERDTreeRefresh | endif
-    " Ensure NERDTree is refreshed when opened
-    autocmd VimEnter,BufWinEnter * if exists("g:NERDTree") && g:NERDTree.IsOpen() | NERDTreeRefresh | endif
+" Apply colors to dev-icons when coc-explorer is active
+augroup ApplyGlyphPalette
+  autocmd! *
+  autocmd FileType coc-explorer call glyph_palette#apply()
 augroup END
 
-" Exit Vim/Close Tab when NERDTree is the last window left
-augroup NERDTreeExitVim
+" Change the default ugly coc-explorer title to 'Explorer'
+augroup CocExplorerChangeTitle
     autocmd!
-    " Exit Vim if NERDTree is the only window remaining in the only tab.
-    autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
-    " Close the tab if NERDTree is the only window remaining in it.
-    autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | call feedkeys(":quit\<CR>:\<BS>") | endif
+    autocmd FileType coc-explorer setlocal title titlestring=Explorer
+    autocmd BufEnter * if &filetype == 'coc-explorer'
+            \ | setlocal title titlestring=Explorer
+            \ | else
+            \ | setlocal title titlestring=
+            \ | endif
 augroup END
-" }}}
 
-" GUTENTAGS SETTINGS ---------------------------------------------------------------- {{{
+" Map the ± key to toggle coc-explorer open and close.
+" nnoremap <silent> ± :CocCommand explorer<CR>
+" Use preset argument to open it
+nnoremap <leader>ev <Cmd>CocCommand explorer --preset .vim<CR>
+nnoremap <leader>ec <Cmd>CocCommand explorer --preset cocConfig<CR>
+nnoremap <leader>eb <Cmd>CocCommand explorer --preset buffer<CR>
+nnoremap ± <Cmd>CocCommand explorer --preset defaultLeft --preset simplify<CR>
+" List all presets
+nnoremap <leader>el <Cmd>CocList explPresets<CR>
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
 
-" ## Gutentags configuration
+" MATCHUP: ·····························································································································································{{{
+
+" **plugin info: modern matchit and matchparen plugin
+
+" Improve performance:
+let g:matchup_matchparen_deferred = 1
+let g:matchup_matchparen_timeout = 300
+let g:matchup_matchparen_insert_timeout = 60
+
+" Enable experimental transmute module
+let g:matchup_transmute_enabled = 1
+
+" Enhanced matching visualization
+let g:matchup_matchparen_offscreen = {'method': 'popup'}
+
+" Enable surrounding operations (see options below)
+let g:matchup_surround_enabled = 1
+
+" Surrounding operations: (if enabled)
+" ds%: Delete surrounding matched pair
+" cs%: Change surrounding matched pair
+" Highlight surrounding delimiters: <plug>(matchup-hi-surround)
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
+
+" GUTENTAGS: ···························································································································································{{{
 
 " Gutentags Configuration
-let g:gutentags_project_root = ['.git', '.svn', '.root']
+let g:gutentags_project_root = ['.git', '.root', 'package.json', 'tsconfig.json']
 let g:gutentags_modules = ['ctags']
-let g:gutentags_ctags_extra_args = ['--tag-relative=yes', '--fields=+niazS', '--extras=+q', '--javascript-kinds=+f-c-m-p-v', '--exclude=node_modules']
-   
-" Optional: Set cache directory
-let g:gutentags_cache_dir = expand('~/.cache/tags')
-   
-" Optional: Enable advanced commands for debugging
-let g:gutentags_define_advanced_commands = 1
 
+let g:gutentags_ctags_extra_args = [
+      \ '--tag-relative=yes',
+      \ '--fields=+niazS',
+      \ '--extras=+q',
+      \ '--javascript-kinds=+fcmpv',
+      \ '--typescript-kinds=+cefgmoprstv',
+      \ '--python-kinds=+cfm',
+      \ '--html-kinds=+af',
+      \ '--css-kinds=+acgps',
+      \ '--less-kinds=+acgps',
+      \ '--scss-kinds=+acgps',
+      \ '--langmap=javascript:.js.es6.es.jsx.mjs.cjs',
+      \ '--langmap=typescript:.ts.tsx',
+      \ '--langmap=html:.html.htm.shtml.xhtml.htmx',
+      \ '--langmap=css:.css.less.scss',
+      \ '--langmap=svelte:.svelte',
+      \ '--langmap=vue:.vue'
+      \ ]
+
+" Set cache directory, create if it doesn't exist
+let g:gutentags_cache_dir = expand('~/.cache/tags')
+if !isdirectory(g:gutentags_cache_dir)
+    call mkdir(g:gutentags_cache_dir, 'p')
+endif
+
+" Enable/disable advanced commands for debugging
+let g:gutentags_define_advanced_commands = 0
+
+" Exclusions
 let g:gutentags_ctags_exclude = [
     \ '*.svg', '*.hg',
     \ '*/tests/*',
@@ -578,10 +680,10 @@ let g:gutentags_ctags_exclude = [
     \ '*.md',
     \ '*-lock.json',
     \ '*.lock',
+    \ '*.vim/bundle/*',
     \ '*bundle*.js',
     \ '*build*.js',
     \ '.*rc*',
-    \ '*.json',
     \ '*.min.*',
     \ '*.map',
     \ '*.bak',
@@ -597,145 +699,15 @@ let g:gutentags_ctags_exclude = [
     \ '*.pdb',
     \ 'tags*',
     \ 'cscope.*',
-    \ '*.css',
-    \ '*.less',
-    \ '*.scss',
     \ '*.exe', '*.dll', '*.mp3', '*.ogg', '*.flac',
     \ '*.swp', '*.swo',
     \ '*.bmp', '*.gif', '*.ico', '*.jpg', '*.png',
     \ '*.rar', '*.zip', '*.tar', '*.tar.gz', '*.tar.xz', '*.tar.bz2',
     \ '*.pdf', '*.doc', '*.docx', '*.ppt', '*.pptx',
     \ ]
-" }}}
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
 
-" RUN PYTHON & NODE SCRIPT ---------------------------------------------------------------- {{{
-
-" #####RUN PYTHON IN BUFFER WITH F5 #####
-" https://stackoverflow.com/questions/18948491/running-python-code-in-vim
-function! SaveAndExecutePython() abort
-    " SOURCE [reusable window]: https://github.com/fatih/vim-go/blob/master/autoload/go/ui.vim
-
-    " save and reload current file
-    silent execute "update | edit"
-
-    " get file path of current file
-    let s:current_buffer_file_path = expand("%")
-
-    let s:output_buffer_name = "Python"
-    let s:output_buffer_filetype = "output"
-
-    " reuse existing buffer window if it exists otherwise create a new one
-    if !exists("s:buf_nr") || !bufexists(s:buf_nr)
-        silent execute 'botright new ' . s:output_buffer_name
-        let s:buf_nr = bufnr('%')
-    elseif bufwinnr(s:buf_nr) == -1
-        silent execute 'botright new'
-        silent execute s:buf_nr . 'buffer'
-    elseif bufwinnr(s:buf_nr) != bufwinnr('%')
-        silent execute bufwinnr(s:buf_nr) . 'wincmd w'
-    endif
-
-    silent execute "setlocal filetype=" . s:output_buffer_filetype
-    setlocal bufhidden=delete
-    setlocal buftype=nofile
-    setlocal noswapfile
-    setlocal nobuflisted
-    setlocal winfixheight
-    " setlocal cursorline " make it easy to distinguish
-    setlocal nonumber
-    setlocal norelativenumber
-    setlocal showbreak=""
-
-    " clear the buffer
-    setlocal noreadonly
-    setlocal modifiable
-    %delete _
-
-    " add the console output
-    silent execute ".!python " . shellescape(s:current_buffer_file_path, 1)
-
-    " resize window to content length
-    " Note: This is annoying because if you print a lot of lines then your code buffer is forced to a height of one line every time you run this function.
-    "       However without this line the buffer starts off as a default size and if you resize the buffer then it keeps that custom size after repeated runs of this function.
-    "       But if you close the output buffer then it returns to using the default size when its recreated
-    "execute 'resize' . line('$')
-
-    " make the buffer non modifiable
-    set laststatus=0
-    setlocal readonly
-    setlocal nomodifiable
-    if (line('$') == 1 && getline(1) == '')
-      q!
-    endif
-    silent execute 'wincmd p'
-endfunction
-
-" #####RUN NODE IN BUFFER WITH F7 #####
-" https://stackoverflow.com/questions/18948491/running-python-code-in-vim
-function! SaveAndExecuteNode() abort
-    " SOURCE [reusable window]: https://github.com/fatih/vim-go/blob/master/autoload/go/ui.vim
-
-    " save and reload current file
-    silent execute "update | edit"
-
-    " get file path of current file
-    let s:current_buffer_file_path = expand("%")
-
-    let s:output_buffer_name = "Node"
-    let s:output_buffer_filetype = "output"
-
-    " reuse existing buffer window if it exists otherwise create a new one
-    if !exists("s:buf_nr") || !bufexists(s:buf_nr)
-        silent execute 'botright new ' . s:output_buffer_name
-        let s:buf_nr = bufnr('%')
-    elseif bufwinnr(s:buf_nr) == -1
-        silent execute 'botright new'
-        silent execute s:buf_nr . 'buffer'
-    elseif bufwinnr(s:buf_nr) != bufwinnr('%')
-        silent execute bufwinnr(s:buf_nr) . 'wincmd w'
-    endif
-
-    silent execute "setlocal filetype=" . s:output_buffer_filetype
-    setlocal bufhidden=delete
-    setlocal buftype=nofile
-    setlocal noswapfile
-    setlocal nobuflisted
-    setlocal winfixheight
-    " setlocal cursorline " make it easy to distinguish
-    setlocal nonumber
-    setlocal norelativenumber
-    setlocal showbreak=""
-
-    " clear the buffer
-    setlocal noreadonly
-    setlocal modifiable
-    %delete _
-
-    " add the console output
-    silent execute ".!node " . shellescape(s:current_buffer_file_path, 1)
-
-    " resize window to content length
-    " Note: This is annoying because if you print a lot of lines then your code buffer is forced to a height of one line every time you run this function.
-    "       However without this line the buffer starts off as a default size and if you resize the buffer then it keeps that custom size after repeated runs of this function.
-    "       But if you close the output buffer then it returns to using the default size when its recreated
-    "execute 'resize' . line('$')
-
-    " make the buffer non modifiable
-    set laststatus=0
-    setlocal readonly
-    setlocal nomodifiable
-    if (line('$') == 1 && getline(1) == '')
-      q!
-    endif
-    silent execute 'wincmd p'
-endfunction
-
-" }}}
-
-" STATUS LINE ---------------------------------------------------------------- {{{
-
-" Always display the status line
-set laststatus=2
+" STATUS LINE: ·························································································································································{{{
 
 " Initialize variables to store git branch name, number of changes and git root
 let g:git_root = ''
@@ -746,8 +718,7 @@ let g:git_files_changed = 0
 let g:git_status_output = []
 
 " Configuration for the Lightline plugin
-let g:lightline = {
-\   'colorscheme': 'solarized',  
+let g:lightline = { 
 \   'active': {
 \    'left' :[ [ 'mode', 'paste' ],  
 \              [ 'readonly', 'filename', 'modified' ],  
@@ -755,7 +726,6 @@ let g:lightline = {
 \            ],
 \    'right':[ [ 'percent', 'lineinfo' ],  
 \              [ 'filetype' ],
-\              [ 'gutentags'],
 \              [ 'cocstatus_error', 'cocstatus_warning', 'cocstatus_info', 'cocstatus_hint' ]  
 \            ]
 \   },
@@ -790,6 +760,65 @@ let g:lightline = {
 \   }
 \}
 
+" Toggle lightline colorschemes
+function! ToggleLightlineColorscheme(direction)
+    " List of available Lightline color schemes
+    let schemes = [
+        \ '16color', 'apprentice', 'ayu_dark', 'ayu_light', 'ayu_mirage',
+        \ 'darcula', 'default', 'deus', 'jellybeans', 'landscape',
+        \ 'materia', 'material', 'molokai', 'nord', 'OldHope',
+        \ 'onedark', 'PaperColor_dark', 'PaperColor_light', 'PaperColor',
+        \ 'powerline', 'powerlineish', 'rosepine_moon', 'rosepine',
+        \ 'selenized_black', 'selenized_dark', 'selenized_light', 'selenized_white',
+        \ 'seoul256', 'simpleblack', 'solarized', 'srcery_drk',
+        \ 'Tomorrow_Night_Blue', 'Tomorrow_Night_Bright', 'Tomorrow_Night_Eighties', 
+        \ 'Tomorrow_Night', 'Tomorrow', 'wombat'
+    \ ]
+    
+    " Get the current color scheme index
+    let current = index(schemes, get(g:lightline, 'colorscheme'))
+    let l:len = len(schemes)
+    
+    " Calculate the new index based on the direction (1 for next, -1 for previous)
+    let new_index = (current + a:direction + l:len) % l:len
+    
+    " Set the new color scheme
+    let g:lightline.colorscheme = schemes[new_index]
+    
+    " Initialize and update Lightline with the new color scheme
+    call lightline#init()
+    call lightline#colorscheme()
+    call lightline#update()
+    
+    " Save the current color scheme to a file for persistence
+    let config_dir = expand('~/.config/vim/lightline_colorscheme')
+    if !isdirectory(config_dir)
+        call mkdir(config_dir, 'p')
+    endif
+    let config_file = config_dir . '/lightline_colorscheme.vim'
+    let content = ['let g:lightline = extend(get(g:, "lightline", {}), { "colorscheme": "' . schemes[new_index] . '" })']
+    try
+        call writefile(content, config_file)
+        echohl MoreMsg
+        echomsg "Statusline color scheme: " . schemes[new_index] . " (saved)"
+        echohl None
+        call timer_start(2000, {-> execute('echo ""')})
+    catch
+        echoerr "Failed to save colorscheme: " . v:exception
+    endtry
+endfunction
+
+" Make toggled scheme to persist after reloading vim
+if filereadable(expand('~/.config/vim/lightline_colorscheme/lightline_colorscheme.vim'))
+    source ~/.config/vim/lightline_colorscheme/lightline_colorscheme.vim
+else
+    let g:lightline.colorscheme = 'onedark'
+endif
+
+" Map keys to toggle to the next and previous Lightline color schemes
+nnoremap <silent> <leader>tl :call ToggleLightlineColorscheme(1)<CR>
+nnoremap <silent> <leader>lt :call ToggleLightlineColorscheme(-1)<CR>
+
 " Helper function to get diagnostic count with icon
 function! s:GetDiagCountWithIcon(type, icon)
     let l:info = get(b:, 'coc_diagnostic_info', {})
@@ -815,8 +844,8 @@ endfunction
 
 " Function for filename section in Lightline
 function! LightlineFilename() abort
-    if &filetype == 'nerdtree'
-        return 'NERDTree'
+    if &filetype == 'coc-explorer'
+        return 'Explorer'
     elseif &buftype == 'terminal'
         return 'Terminal'
     endif
@@ -825,7 +854,7 @@ endfunction
 
 " Function to get line information for Lightline
 function! LightlineLineinfo() abort
-    if index(['nerdtree', 'gitcommit'], &filetype) != -1 || &buftype == 'terminal' || winwidth(0) < 76
+    if index(['coc-explorer', 'gitcommit', 'list'], &filetype) != -1 || &buftype == 'terminal' || winwidth(0) < 76
         return ''
     endif
     return line('.') . '/' . line('$')
@@ -833,7 +862,7 @@ endfunction
 
 " Function to display the percent component for Lightline
 function! LightlinePercent() abort
-    if index(['nerdtree', 'gitcommit'], &filetype) == -1 && &buftype != 'terminal'
+    if index(['coc-explorer', 'gitcommit', 'list'], &filetype) == -1 && &buftype != 'terminal'
         return line('.') * 100 / line('$') . '%'
     endif
     return ''
@@ -846,7 +875,7 @@ endfunction
 
 " Function to display the mode for Lightline
 function! LightlineMode() abort
-    if &filetype == 'nerdtree'
+    if &filetype == 'coc-explorer'
         return ''
     elseif &buftype == 'terminal'
         return ''
@@ -856,12 +885,12 @@ endfunction
 
 " Function to display read-only status for Lightline
 function! LightlineReadonly() abort
-    return &readonly ? get({'nerdtree': ''}, &filetype, '') : ''
+    return &readonly ? get({'coc-explorer': ''}, &filetype, '') : ''
 endfunction
 
 " Function to display file type for Lightline
 function! LightlineFiletype() abort
-    if index(['nerdtree'], &filetype) != -1 || &buftype == 'terminal'
+    if index(['coc-explorer', 'list'], &filetype) != -1 || &buftype == 'terminal'
         return ''
     endif
 
@@ -892,7 +921,7 @@ function! GetCurrentGitBranch() abort
 endfunction
 
 function! GetCurrentGitChanges() abort
-    if index(['nerdtree', 'gitcommit'], &filetype) != -1 || &buftype == 'terminal' || empty(g:git_branch)
+    if index(['coc-explorer', 'gitcommit'], &filetype) != -1 || &buftype == 'terminal' || empty(g:git_branch)
         return ''
     endif
     
@@ -902,7 +931,7 @@ endfunction
 
 " Function to display git information in Lightline
 function! LightlineGitInfo() abort
-    if index(['nerdtree', 'gitcommit'], &filetype) != -1 || &buftype == 'terminal'
+    if index(['coc-explorer', 'gitcommit'], &filetype) != -1 || &buftype == 'terminal'
         return ''
     endif
     return (g:git_files_changed > 0 ? '+' . g:git_files_changed : '') . g:git_branch
@@ -976,7 +1005,7 @@ endfunction
 " Set up autocommands to trigger updates
 augroup GitStatusUpdate
     autocmd!
-    autocmd BufWritePost,BufEnter,FocusGained * call DebouncedGitUpdate(500)
+    autocmd BufWritePost,BufEnter * call DebouncedGitUpdate(1000)
     autocmd CursorHold,CursorHoldI * call DebouncedGitUpdate(1000)
 augroup END
 
@@ -984,5 +1013,4 @@ augroup CocDiagnostic
     autocmd!
     autocmd User CocDiagnosticChange call lightline#update()
 augroup END
-
-" }}}
+"•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••}}}
