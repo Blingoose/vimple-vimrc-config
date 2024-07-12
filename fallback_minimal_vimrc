@@ -1,0 +1,59 @@
+" If user's terminal is 'mac terminal' we are loading these!
+
+" Basic Vim settings (should be set before plugins are loaded)
+set nocompatible
+set encoding=utf-8
+set nomodeline  " Disable modeline due to known vulnerability
+
+" Plugin management
+call plug#begin('~/.config/vim/plugged')
+Plug 'tpope/vim-sensible'
+Plug 'itchyny/lightline.vim'
+call plug#end()
+
+" Color and visual settings
+set background=dark
+colorscheme slate
+set title
+set number
+set nocursorline
+set nocursorcolumn
+set lazyredraw
+
+" File handling and backup settings
+set nobackup
+set nowritebackup
+set undodir=~/.config/vim/undo
+set undofile
+set undoreload=10000
+set dir=~/.config/vim/swap
+
+" Search settings
+set ignorecase
+set smartcase
+set hlsearch
+set showmatch
+
+" Indentation and formatting
+set shiftwidth=4
+set tabstop=4
+set expandtab
+set autoindent
+set nowrap
+
+" Command line and wild menu settings
+set showcmd
+set wildmode=list:longest,full
+set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
+
+" Performance settings
+set updatetime=300
+
+" User interface settings
+set mouse=a
+set noshowmode
+set noerrorbells
+set visualbell
+
+" Lightline configuration (if needed)
+let g:lightline = { 'colorscheme': 'solarized' }
