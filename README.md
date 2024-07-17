@@ -76,7 +76,7 @@ can also read about it at [:h xdg-base-dir](https://vimhelp.org/starting.txt.htm
 Inside Vim, enter the following command to install necessary CoC extensions:
 
 ```
-:CocInstall coc-json coc-vimlsp coc-pyright coc-tsserver coc-eslint coc-prettier coc-html coc-css coc-emmet coc-markdownlint coc-yaml coc-highlight coc-snippets
+:CocInstall coc-json coc-vimlsp coc-pyright coc-tsserver coc-eslint coc-prettier coc-html coc-css coc-emmet coc-markdownlint coc-yaml coc-highlight coc-snippets coc-explorer
 ```
 
 For more information, visit the [Coc.nvim GitHub repository](https://github.com/neoclide/coc.nvim).
