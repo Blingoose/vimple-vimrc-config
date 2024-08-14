@@ -1,4 +1,4 @@
-# Update: Not maintained anymore 😢. Just use vscode, it's better.
+# Update: Not maintained anymore😢. Use vscode, it's better.
 
 # Vimple
 
