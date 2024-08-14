@@ -1,7 +1,9 @@
+# Update: Not maintained anymore 😢. Just use vscode, it's better.
+
 # Vimple
 
 Welcome to my Vim setup, where Vim and Simple combine to create Vimple—
-a straightforward yet powerful IDE-like experience that's reliable and very functional.
+a straightforward yet powerful IDE-like experience that's reliable and very functional. Kidding. It's not simple at all.
 
 ## Support for the XDG Base Directory Specification
 
